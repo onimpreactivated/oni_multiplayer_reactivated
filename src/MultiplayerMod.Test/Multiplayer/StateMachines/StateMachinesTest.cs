@@ -9,7 +9,7 @@ namespace MultiplayerMod.Test.Multiplayer.StateMachines;
 public class StateMachinesTest : PlayableGameTest {
 
     [TearDown]
-    private void StateMachinesTearDown() {
+    public void StateMachinesTearDown() {
         StateMachineManager.Instance.stateMachines.Clear();
     }
 

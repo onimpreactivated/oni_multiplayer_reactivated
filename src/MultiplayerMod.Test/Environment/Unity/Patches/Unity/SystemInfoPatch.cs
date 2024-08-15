@@ -22,4 +22,16 @@ public class SystemInfoPatch {
         };
     }
 
+    [UsedImplicitly]
+    [HarmonyTranspiler]
+    [HarmonyPatch(nameof(SystemInfo.operatingSystem), MethodType.Getter)]
+    private static IEnumerable<CodeInstruction> SystemInfo_get_OperatingSystem(
+        IEnumerable<CodeInstruction> instructions
+    ) {
+        return new List<CodeInstruction> {
+            new(OpCodes.Ldstr, "Windows 11 (10.0.22621) 64bit"),
+            new(OpCodes.Ret)
+        };
+    }
+
 }
