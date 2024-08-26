@@ -68,7 +68,11 @@ public class TestMultiplayerServer : IMultiplayerServer {
         (player as TestMultiplayerClientId)!.Client.Receive(CommandTools.Copy(command));
     }
 
-    public void Send(IMultiplayerCommand command, MultiplayerCommandOptions options) {
+    public void SendAll(IMultiplayerCommand command) => Send(command, MultiplayerCommandOptions.None);
+
+    public void Send(IMultiplayerCommand command) => Send(command,MultiplayerCommandOptions.SkipHost);
+
+    private void Send(IMultiplayerCommand command, MultiplayerCommandOptions options) {
         var oldRuntime = (TestRuntime) Runtime.Instance;
         try {
             runtime.Activate();

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using HarmonyLib;
 using MultiplayerMod.Core.Extensions;
 using MultiplayerMod.Core.Scheduling;
@@ -17,7 +16,7 @@ public static class UnityTestRuntime {
     private static readonly Harmony harmony = new("Unity.Test");
 
     private static readonly List<Type> unityPatches = typeof(UnityTestRuntime).Assembly.GetTypes()
-        .Where(type => type.Namespace.StartsWith(typeof(UnityTestRuntime).Namespace + ".Patches"))
+        .Where(type => type.Namespace?.StartsWith(typeof(UnityTestRuntime).Namespace + ".Patches") == true)
         .ToList();
 
     private static readonly Dictionary<Type, Dictionary<UnityEvent, MethodInfo>> eventMethodCache = new();

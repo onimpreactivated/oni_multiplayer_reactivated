@@ -29,7 +29,7 @@ public class ChoreDriverSynchronization {
         var synchronized = driverSynchronizationState.GetValue(driver, _ => new BoxedValue<bool>(false));
         var shouldReleaseDriver = synchronized.Value && previousChore != null && processor.Supported(previousChore);
         if (shouldReleaseDriver) {
-            server.Send(new ReleaseChoreDriver(driver), MultiplayerCommandOptions.SkipHost);
+            server.Send(new ReleaseChoreDriver(driver));
             synchronized.Value = false;
         }
 
@@ -37,7 +37,7 @@ public class ChoreDriverSynchronization {
             return;
 
         var command = new SetDriverChore(driver, context.consumerState.consumer, context.chore, context.data);
-        server.Send(command, MultiplayerCommandOptions.SkipHost);
+        server.Send(command);
         synchronized.Value = true;
     }
 

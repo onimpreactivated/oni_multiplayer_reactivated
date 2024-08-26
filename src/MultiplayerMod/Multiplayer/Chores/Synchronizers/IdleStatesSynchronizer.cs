@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using MultiplayerMod.Core.Dependency;
 using MultiplayerMod.Multiplayer.Commands.Objects;
 using MultiplayerMod.Multiplayer.Objects;
 using MultiplayerMod.Multiplayer.Objects.Extensions;
@@ -10,22 +11,18 @@ using MultiplayerMod.Network;
 
 namespace MultiplayerMod.Multiplayer.Chores.Synchronizers;
 
-[UsedImplicitly]
+[Dependency, UsedImplicitly]
 public class IdleStatesSynchronizer(
     IMultiplayerServer server,
     MultiplayerObjects objects
-) : StateMachineBoundedConfigurer<IdleStates, IdleStates.Instance, IStateMachineTarget, IdleStates.Def> {
+) : StateMachineConfigurer<IdleStates, IdleStates.Instance, IStateMachineTarget, IdleStates.Def> {
 
-    protected override void Configure(
-        StateMachineRootConfigurer<IdleStates, IdleStates.Instance, IStateMachineTarget, IdleStates.Def> configurer
-    ) {
-        configurer.PreConfigure(MultiplayerMode.Client, SetupClient);
-        configurer.PostConfigure(MultiplayerMode.Host, SetupHost);
+    protected override void Configure(IStateMachineRootConfigurer<IdleStates, IdleStates.Instance, IStateMachineTarget, IdleStates.Def> root) {
+        root.PreConfigure(MultiplayerMode.Client, SetupClient);
+        root.PostConfigure(MultiplayerMode.Host, SetupHost);
     }
 
-    private void SetupHost(
-        StateMachinePostConfigurer<IdleStates, IdleStates.Instance, IStateMachineTarget, IdleStates.Def> configurer
-    ) {
+    private void SetupHost(StateMachinePostConfigurer<IdleStates, IdleStates.Instance, IStateMachineTarget, IdleStates.Def> configurer) {
         var sm = configurer.StateMachine;
 
         sm.move.Enter(smi => {
@@ -36,10 +33,8 @@ public class IdleStatesSynchronizer(
             if (objects.Get(smi.master.gameObject) == null)
                 return;
 
-            server.Send(
-                new MoveObjectToCell(new StateMachineReference(smi.controller.GetReference(), smi.GetType()), cell, sm.move),
-                MultiplayerCommandOptions.SkipHost
-            );
+            var reference = new StateMachineReference(smi.controller.GetReference(), smi.GetType());
+            server.Send(new MoveObjectToCell(reference, cell, sm.move));
         });
         sm.move.Exit(smi => {
 
@@ -47,20 +42,13 @@ public class IdleStatesSynchronizer(
             if (objects.Get(smi.master.gameObject) == null)
                 return;
 
-            server.Send(
-                new GoToState(new StateMachineReference(smi.controller.GetReference(), smi.GetType()), sm.loop),
-                MultiplayerCommandOptions.SkipHost
-            );
-            server.Send(
-                new SynchronizeObjectPosition(smi.gameObject),
-                MultiplayerCommandOptions.SkipHost
-            );
+            var reference = new StateMachineReference(smi.controller.GetReference(), smi.GetType());
+            server.Send(new GoToState(reference, sm.loop));
+            server.Send(new SynchronizeObjectPosition(smi.gameObject));
         });
     }
 
-    private void SetupClient(
-        StateMachinePreConfigurer<IdleStates, IdleStates.Instance, IStateMachineTarget, IdleStates.Def> configurer
-    ) {
+    private void SetupClient(StateMachinePreConfigurer<IdleStates, IdleStates.Instance, IStateMachineTarget, IdleStates.Def> configurer) {
         var sm = configurer.StateMachine;
 
         // Suppress transitions to the "move" state
