@@ -19,7 +19,7 @@ public class RequestPlayerStateChangeCommand : MultiplayerCommand {
 
     public override void Execute(MultiplayerCommandContext context) {
         var server = context.Runtime.Dependencies.Get<IMultiplayerServer>();
-        server.Send(new ChangePlayerStateCommand(playerId, state));
+        server.SendAll(new ChangePlayerStateCommand(playerId, state));
     }
 
 }

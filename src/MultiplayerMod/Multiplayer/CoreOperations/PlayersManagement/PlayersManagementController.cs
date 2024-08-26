@@ -63,7 +63,7 @@ public class PlayersManagementController {
     private void OnCurrentPlayerInitialized(CurrentPlayerInitializedEvent @event) {
         client.Send(new RequestPlayerStateChangeCommand(@event.Player.Id, PlayerState.Loading));
         if (@event.Player.Role == PlayerRole.Host)
-            server.Send(new ChangePlayerStateCommand(@event.Player.Id, PlayerState.Ready));
+            server.SendAll(new ChangePlayerStateCommand(@event.Player.Id, PlayerState.Ready));
         else
             client.Send(new RequestWorldSyncCommand());
     }
@@ -104,7 +104,7 @@ public class PlayersManagementController {
             throw new PlayersManagementException($"No associated player found for client {clientId}");
 
         var player = multiplayer.Players[playerId];
-        server.Send(new RemovePlayerCommand(player.Id));
+        server.SendAll(new RemovePlayerCommand(player.Id));
         identities.Remove(clientId);
         log.Debug($"Client {clientId} disconnected {{ Id = {player.Id} }}");
     }

@@ -51,21 +51,21 @@ public class WorldManager {
         SetupStatusOverlay();
 
         var resume = !SpeedControlScreen.Instance.IsPaused;
-        server.Send(new PauseGame());
+        server.SendAll(new PauseGame());
 
         events.Dispatch(new WorldSyncEvent());
 
-        multiplayer.Players.ForEach(it => server.Send(new ChangePlayerStateCommand(it.Id, PlayerState.Loading)));
-        server.Send(new ChangePlayerStateCommand(multiplayer.Players.Current.Id, PlayerState.Ready));
-        server.Send(new NotifyWorldSavePreparing(), MultiplayerCommandOptions.SkipHost);
+        multiplayer.Players.ForEach(it => server.SendAll(new ChangePlayerStateCommand(it.Id, PlayerState.Loading)));
+        server.SendAll(new ChangePlayerStateCommand(multiplayer.Players.Current.Id, PlayerState.Ready));
+        server.Send(new NotifyWorldSavePreparing());
 
         var world = new WorldSave(WorldName, GetWorldSave(), new WorldState());
         worldStateManagers.ForEach(it => it.SaveState(world.State));
-        server.Send(new LoadWorld(world), MultiplayerCommandOptions.SkipHost);
+        server.Send(new LoadWorld(world));
         events.Subscribe<PlayersReadyEvent>(
             (_, subscription) => {
                 if (resume)
-                    server.Send(new ResumeGame());
+                    server.SendAll(new ResumeGame());
                 subscription.Cancel();
             }
         );

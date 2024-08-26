@@ -3,7 +3,6 @@ using System.Linq;
 using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerMod.Core.Events;
-using MultiplayerMod.Core.Extensions;
 using MultiplayerMod.ModRuntime;
 using MultiplayerMod.Multiplayer.StateMachines;
 using MultiplayerMod.Multiplayer.StateMachines.Configuration;
@@ -23,8 +22,8 @@ public class StateMachineDslTests : StateMachinesTest {
 
     private static void RunStateMachinesPatcher(params StateMachineConfigurer[] configurers) {
         var dispatcher = new EventDispatcher();
-        var patcher = new StateMachinesPatcher(dispatcher, harmony, DependencyContainer);
-        configurers.ForEach(it => patcher.Register(it));
+        // ReSharper disable once UnusedVariable
+        var patcher = new StateMachinesPatcher(dispatcher, harmony, DependencyContainer, configurers.Cast<IStateMachineConfigurer>().ToList());
         dispatcher.Dispatch(new RuntimeReadyEvent(Runtime.Instance));
     }
 

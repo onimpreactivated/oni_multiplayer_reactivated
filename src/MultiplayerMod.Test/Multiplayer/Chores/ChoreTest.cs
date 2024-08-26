@@ -6,20 +6,18 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using Klei.AI;
 using MultiplayerMod.Core.Dependency;
-using MultiplayerMod.Core.Events;
 using MultiplayerMod.Core.Extensions;
+using MultiplayerMod.ModRuntime.Context;
 using MultiplayerMod.ModRuntime.StaticCompatibility;
 using MultiplayerMod.Multiplayer.Chores;
 using MultiplayerMod.Multiplayer.Commands;
-using MultiplayerMod.Multiplayer.Commands.Registry;
-using MultiplayerMod.Multiplayer.Objects;
+using MultiplayerMod.Multiplayer.CoreOperations;
 using MultiplayerMod.Multiplayer.Objects.Extensions;
 using MultiplayerMod.Multiplayer.StateMachines;
 using MultiplayerMod.Multiplayer.StateMachines.Configuration;
 using MultiplayerMod.Network;
 using MultiplayerMod.Platform.Steam.Network.Messaging;
 using MultiplayerMod.Test.Environment;
-using MultiplayerMod.Test.Environment.Network;
 using MultiplayerMod.Test.Environment.Patches;
 using MultiplayerMod.Test.GameRuntime;
 using MultiplayerMod.Test.GameRuntime.Patches;
@@ -51,6 +49,8 @@ public abstract class ChoreTest : PlayableGameTest {
     [OneTimeSetUp]
     public void SetUp() {
         Dependencies.Get<IDependencyInjector>().Inject(typeof(ChoreExtensions));
+        Dependencies.Get<IDependencyInjector>().Inject(typeof(RequireMultiplayerModeAttribute));
+        Dependencies.Get<IDependencyInjector>().Inject(typeof(RequireExecutionLevelAttribute));
     }
 
     [SetUp]
@@ -70,7 +70,8 @@ public abstract class ChoreTest : PlayableGameTest {
     private static void SetUp(DependencyContainerBuilder builder) {
         builder
             .AddType<StateMachinesPatcher>()
-            .AddType<ChoresPatcher>();
+            .AddType<ChoresPatcher>()
+            .AddStateMachineAndChoreConfigurers();
     }
 
     protected class TestCasePatchesAttribute : Attribute;
@@ -156,6 +157,7 @@ public abstract class ChoreTest : PlayableGameTest {
         targetGameObject.AddComponent<KSelectable>();
         targetGameObject.AddComponent<ConsumableConsumer>().forbiddenTagSet = [];
         targetGameObject.AddComponent<Worker>();
+        targetGameObject.AddComponent<Storage>();
 
         Assets.PrefabsByTag[(Tag) TargetLocator.ID] = targetGameObject.GetComponent<KPrefabID>();
         Assets.PrefabsByTag[(Tag) MinionAssignablesProxyConfig.ID] =
@@ -205,23 +207,19 @@ public abstract class ChoreTest : PlayableGameTest {
     protected static HashSet<Type> SupportedChoreTypes;
 
     static ChoreTest() {
+        var type = typeof(IStateMachineConfigurer);
         var container = new DependencyContainerBuilder()
-            .AddType<TestMultiplayerServer>()
-            .AddType<TestMultiplayerClient>()
-            .AddType<MultiplayerObjects>()
-            .AddType<EventDispatcher>()
-            .AddSingleton(new TestMultiplayerClientId(1))
-            .AddType<MultiplayerCommandRegistry>()
-            .AddType<TestRuntime>()
+            .AddSystem()
+            .AddNetworking()
+            .ScanAssembly(type.Assembly, it => type.IsAssignableFrom(it))
             .Build();
 
         var context = new StateMachineConfigurationContext(container);
-        ChoresMultiplayerConfiguration.Configuration
-            .Select(it => it.StatesConfigurer)
-            .NotNull()
-            .ForEach(it => it.Configure(context));
+        var smConfigurers = container.Get<List<IStateMachineConfigurer>>();
+        smConfigurers.ForEach(it => it.Configure(context));
         StateMachineConfigurations = context.Configurations;
-        SupportedChoreTypes = ChoresMultiplayerConfiguration.Configuration.Select(it => it.ChoreType).NotNull().ToHashSet();
+        var choreConfigurers = container.Get<List<IChoreConfigurer>>();
+        SupportedChoreTypes = choreConfigurers.Select(it => it.ChoreType).ToHashSet();
     }
 
     protected static object[][] ChoresInstantiationTestCases() => GetFactories()

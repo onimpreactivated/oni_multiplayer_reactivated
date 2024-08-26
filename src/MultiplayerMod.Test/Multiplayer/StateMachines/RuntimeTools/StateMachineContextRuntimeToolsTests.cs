@@ -38,6 +38,8 @@ public class StateMachineContextRuntimeToolsTests : StateMachinesTest {
         Assert.That(result, Is.False);
     }
 
+    public class CustomParameterData;
+
     [UsedImplicitly]
     public class TestStateMachine : GameStateMachine<TestStateMachine, TestStateMachine.Instance, TestTarget> {
 
@@ -53,9 +55,9 @@ public class StateMachineContextRuntimeToolsTests : StateMachinesTest {
         }
 
         [UsedImplicitly]
-        public class CustomParameter : Parameter {
+        public class CustomParameter : Parameter<CustomParameterData> {
             public override Parameter.Context CreateContext() => new Context(this);
-            new class Context(Parameter parameter) : Parameter.Context(parameter) {
+            new class Context(Parameter parameter) : Parameter<CustomParameterData>.Context(parameter, null!) {
                 public override void Serialize(BinaryWriter writer) => throw new NotImplementedException();
                 public override void Deserialize(IReader reader, StateMachine.Instance smi) => throw new NotImplementedException();
                 public override void ShowEditor(StateMachine.Instance base_smi) => throw new NotImplementedException();

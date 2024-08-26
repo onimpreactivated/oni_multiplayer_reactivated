@@ -45,32 +45,31 @@ public class DependencyContainerBuilderTests {
         Assert.DoesNotThrow(() => container.Get<DependencyB>());
     }
 
-    [UsedImplicitly]
-    public class ManualDependency {
-
-    }
-
-    [Dependency, UsedImplicitly]
-    public class DependencyA {
-
-    }
-
-    [Dependency, UsedImplicitly]
-    public class DependencyB {
-
+    [Test]
+    public void AssemblyFilteredDependenciesAreAvailable() {
+        var container = new DependencyContainerBuilder()
+            .ScanAssembly(GetType().Assembly, it => typeof(IDependencyA).IsAssignableFrom(it))
+            .Build();
+        Assert.DoesNotThrow(() => container.Get<DependencyA>());
+        Assert.Throws<MissingDependencyException>(() => container.Get<DependencyB>());
     }
 
     [UsedImplicitly]
-    public class SingletonAccessor {
-        public SingletonDependency Singleton { get; }
+    public class ManualDependency;
 
-        public SingletonAccessor(SingletonDependency singleton) {
-            Singleton = singleton;
-        }
+    public interface IDependencyA;
+
+    [Dependency, UsedImplicitly]
+    public class DependencyA : IDependencyA;
+
+    [Dependency, UsedImplicitly]
+    public class DependencyB;
+
+    [UsedImplicitly]
+    public class SingletonAccessor(SingletonDependency singleton) {
+        public SingletonDependency Singleton { get; } = singleton;
     }
 
-    public class SingletonDependency {
-
-    }
+    public class SingletonDependency;
 
 }

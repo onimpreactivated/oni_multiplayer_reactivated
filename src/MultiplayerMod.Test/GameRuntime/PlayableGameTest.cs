@@ -19,7 +19,6 @@ using MultiplayerMod.Test.Environment.Network;
 using MultiplayerMod.Test.Environment.Patches;
 using MultiplayerMod.Test.Environment.Unity;
 using MultiplayerMod.Test.GameRuntime.Patches;
-using MultiplayerMod.Test.Multiplayer;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -183,18 +182,9 @@ public abstract class PlayableGameTest {
 
     private static void SetupDependencies() {
         var builder = new DependencyContainerBuilder()
-            .AddType<MultiplayerGame>()
-            .AddType<MultiplayerObjects>()
-            .AddType<ExecutionLevelManager>()
-            .AddType<ExecutionContextManager>()
-            .AddType<EventDispatcher>()
-            .AddType<TestRuntime>()
+            .AddSystem()
+            .AddNetworking()
             .AddType<ControlFlowCustomizer>()
-            .AddType<TestMultiplayerServer>()
-            .AddType<TestMultiplayerClient>()
-            .AddSingleton(new MultiplayerTools.TestPlayerProfileProvider(new PlayerProfile("Test")))
-            .AddSingleton(new TestMultiplayerClientId(1))
-            .AddType<MultiplayerCommandRegistry>()
             .AddSingleton(Harmony);
 
         ResolveCustomizationProviders<ConfigureDependenciesAttribute>(methods => methods

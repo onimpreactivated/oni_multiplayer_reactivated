@@ -20,23 +20,19 @@ public class StateMachinesPatcher {
 
     private readonly Core.Logging.Logger log = LoggerFactory.GetLogger<StateMachinesPatcher>();
     private readonly Harmony harmony;
-    private readonly List<StateMachineConfigurer> configurers = [];
+    private readonly List<IStateMachineConfigurer> configurers = [];
     private readonly StateMachineConfigurationContext context;
 
-    public StateMachinesPatcher(EventDispatcher events, Harmony harmony, IDependencyContainer container) {
+    public StateMachinesPatcher(
+        EventDispatcher events,
+        Harmony harmony,
+        IDependencyContainer container,
+        List<IStateMachineConfigurer> configurers
+    ) {
         this.harmony = harmony;
         context = new StateMachineConfigurationContext(container);
         events.Subscribe<RuntimeReadyEvent>(OnRuntimeReady);
-    }
-
-    public void Register(StateMachineConfigurer configurer) {
-        if (context.Locked) {
-            var name = configurer.StateMachineType.GetSignature();
-            throw new StateMachineConfigurationException(
-                $"Unable to register a configurer for {name}: state machines already configured"
-            );
-        }
-        configurers.Add(configurer);
+        configurers.ForEach(this.configurers.Add);
     }
 
     private void OnRuntimeReady(RuntimeReadyEvent @event) {
@@ -48,7 +44,8 @@ public class StateMachinesPatcher {
             .Select(it => it.GetMethod(nameof(StateMachine.InitializeStates)))
             .ForEach(it => harmony.CreateProcessor(it).AddPrefix(prefix).AddPostfix(postfix).Patch());
         context.Lock();
-        log.Info($"{context.Configurations.Count} state machine types patched");
+        var types = context.Configurations.Select(it => it.StateMachineType).ToArray();
+        log.Info($"{types.Length} state machine types patched:\n\t{string.Join("\n\t", types.Select(it => it.GetSignature()))}");
     }
 
     private static void InitializeStatesPrefix(StateMachine __instance) {

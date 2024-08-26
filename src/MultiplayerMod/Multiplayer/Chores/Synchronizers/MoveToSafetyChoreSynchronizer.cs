@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using MultiplayerMod.Core.Dependency;
 using MultiplayerMod.Multiplayer.Commands.Objects;
 using MultiplayerMod.Multiplayer.Objects.Reference;
 using MultiplayerMod.Multiplayer.StateMachines.Commands;
@@ -9,35 +10,26 @@ using MultiplayerMod.Network;
 
 namespace MultiplayerMod.Multiplayer.Chores.Synchronizers;
 
-[UsedImplicitly]
-public class MoveToSafetyChoreSynchronizer(IMultiplayerServer server) : StateMachineBoundedConfigurer<
-    MoveToSafetyChore.States,
-    MoveToSafetyChore.StatesInstance,
-    MoveToSafetyChore
-> {
+[Dependency, UsedImplicitly]
+public class MoveToSafetyChoreSynchronizer(
+    IMultiplayerServer server
+) : ChoreSynchronizer<MoveToSafetyChore, MoveToSafetyChore.States, MoveToSafetyChore.StatesInstance> {
 
     private readonly StateMachineMultiplayerStateInfo movingStateInfo = new(name: "__moving");
 
-    protected override StateMachineConfigurer[] Inline() => [
+    protected override void Configure(IStateMachineRootConfigurer<MoveToSafetyChore.States, MoveToSafetyChore.StatesInstance, MoveToSafetyChore, object> root) {
         // Disable IdleChore recurring creation
-        new StateMachineConfigurerDsl<SafeCellMonitor, SafeCellMonitor.Instance>(root => {
-            root.PreConfigure(MultiplayerMode.Client, pre => {
+        root.Inline(new StateMachineConfigurerDsl<SafeCellMonitor, SafeCellMonitor.Instance>(monitor => {
+            monitor.PreConfigure(MultiplayerMode.Client, pre => {
                 pre.Suppress(() => pre.StateMachine.danger.ToggleChore(null, null));
             });
-        })
-    ];
+        }));
 
-    protected override void Configure(
-        StateMachineRootConfigurer<MoveToSafetyChore.States, MoveToSafetyChore.StatesInstance, MoveToSafetyChore, object> configurer
-    ) {
-        configurer.PostConfigure(MultiplayerMode.Host, SetupHost);
-        configurer.PostConfigure(MultiplayerMode.Client, SetupClient);
+        root.PostConfigure(MultiplayerMode.Host, SetupHost);
+        root.PostConfigure(MultiplayerMode.Client, SetupClient);
     }
 
-
-    private void SetupClient(
-        StateMachinePostConfigurer<MoveToSafetyChore.States, MoveToSafetyChore.StatesInstance, MoveToSafetyChore, object> configurer
-    ) {
+    private void SetupClient(StateMachinePostConfigurer<MoveToSafetyChore.States, MoveToSafetyChore.StatesInstance, MoveToSafetyChore, object> configurer) {
         var sm = configurer.StateMachine;
         var waiting = configurer.AddState(sm.root, "__waiting");
         var moving = configurer.AddState(sm.root, movingStateInfo);
@@ -50,35 +42,24 @@ public class MoveToSafetyChoreSynchronizer(IMultiplayerServer server) : StateMac
         sm.root.Enter(smi => smi.GoTo(waiting));
     }
 
-    private void SetupHost(
-        StateMachinePostConfigurer<MoveToSafetyChore.States, MoveToSafetyChore.StatesInstance, MoveToSafetyChore, object> configurer
-    ) {
+    private void SetupHost(StateMachinePostConfigurer<MoveToSafetyChore.States, MoveToSafetyChore.StatesInstance, MoveToSafetyChore, object> configurer) {
         var sm = configurer.StateMachine;
+
         sm.move.Enter(smi => {
-            server.Send(
-                new MoveObjectToCell(new ChoreStateMachineReference(smi.master), smi.targetCell, movingStateInfo),
-                MultiplayerCommandOptions.SkipHost
-            );
+            var reference = new ChoreStateMachineReference(smi.master);
+            server.Send(new MoveObjectToCell(reference, smi.targetCell, movingStateInfo));
         });
 
         sm.move.Update((smi, _) => {
-            server.Send(
-                new MoveObjectToCell(new ChoreStateMachineReference(smi.master), smi.targetCell, movingStateInfo),
-                MultiplayerCommandOptions.SkipHost
-            );
+            var reference = new ChoreStateMachineReference(smi.master);
+            server.Send(new MoveObjectToCell(reference, smi.targetCell, movingStateInfo));
         });
 
         sm.move.Exit(smi => {
-            server.Send(
-                new GoToState(new ChoreStateMachineReference(smi.master), (StateMachine.BaseState?) null),
-                MultiplayerCommandOptions.SkipHost
-            );
-            server.Send(
-                new SynchronizeObjectPosition(smi.gameObject),
-                MultiplayerCommandOptions.SkipHost
-            );
+            var reference = new ChoreStateMachineReference(smi.master);
+            server.Send(new GoToState(reference, (StateMachine.BaseState?) null));
+            server.Send(new SynchronizeObjectPosition(smi.gameObject));
         });
-
     }
 
 }

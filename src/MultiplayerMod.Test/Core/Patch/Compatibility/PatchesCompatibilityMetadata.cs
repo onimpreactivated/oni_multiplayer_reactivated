@@ -13,13 +13,13 @@ public static class PatchesCompatibilityMetadata {
     /// </summary>
     [SuppressMessage("ReSharper", "ArrangeObjectCreationWhenTypeNotEvident")]
     private static readonly List<MethodMetadata> methodsMetadata = [
-        new(typeof(AttackChore.States), "InitializeStates(StateMachine.BaseState&)", "76d0303d40ba0af708b454459541a2c0620c7abb"),
-        new(typeof(ThreatMonitor), "InitializeStates(StateMachine.BaseState&)", "fe07b4523742ada76bdfadf86e281046171db20d"),
-        new(typeof(IdleChore.States), "InitializeStates(StateMachine.BaseState&)", "e72be5f2d127b7a3a2362cb51c37c77e89e8a4df"),
-        new(typeof(IdleMonitor), "InitializeStates(StateMachine.BaseState&)", "1a64a103a806e7a88f9e51134681bfd9d821b01a"),
-        new(typeof(MoveToSafetyChore.States), "InitializeStates(StateMachine.BaseState&)", "17d5fdb636b49e3942fb13457dcb63d38801a363"),
-        new(typeof(SafeCellMonitor), "InitializeStates(StateMachine.BaseState&)", "ba30939582cc4532763ffb2250a03d175f2a6db7"),
-        new(typeof(IdleStates), "InitializeStates(StateMachine.BaseState&)", "5b018cf4bf9b0df92febb4d544f9163cf30c18b6")
+        new(typeof(AttackChore.States), "InitializeStates(StateMachine.BaseState&)", "6cd856c28e54e7624864c1e1b5e0788a5c01947b"),
+        new(typeof(ThreatMonitor), "InitializeStates(StateMachine.BaseState&)", "e5fb426a773768edde854bd4ad8320028aa90f90"),
+        new(typeof(IdleChore.States), "InitializeStates(StateMachine.BaseState&)", "1f76fc606b70389d3ae9871387aec31753e0abce"),
+        new(typeof(IdleMonitor), "InitializeStates(StateMachine.BaseState&)", "fb533a4363ea6d7b9b3f5d7a2eed1bb7418fa775"),
+        new(typeof(IdleStates), "InitializeStates(StateMachine.BaseState&)", "1b7443635910b683ccd9a8dd03d17d8fbe4e1c4f"),
+        new(typeof(MoveToSafetyChore.States), "InitializeStates(StateMachine.BaseState&)", "c2edad05c741576db71406d7d2e97ccdb0e37186"),
+        new(typeof(SafeCellMonitor), "InitializeStates(StateMachine.BaseState&)", "fb3ac7a4f21a714afc82921f811ebd4d3aa6a3e9")
     ];
 
     public static readonly HashAlgorithm HashAlgorithm = SHA1.Create();

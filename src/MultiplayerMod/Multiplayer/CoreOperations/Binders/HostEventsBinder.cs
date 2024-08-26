@@ -33,8 +33,7 @@ public class HostEventsBinder {
 
     private void BindChores() {
         events.Subscribe<ChoreCreatedEvent>(@event => server.Send(
-            new CreateChore(@event.Id, @event.Type, @event.Arguments),
-            MultiplayerCommandOptions.SkipHost
+            new CreateChore(@event.Id, @event.Type, @event.Arguments)
         ));
     }
 
@@ -51,7 +50,7 @@ public class HostEventsBinder {
 
         subscriptions = [
             events.Subscribe<WorldSavedEvent>(_ => worldManager.Sync()),
-            events.Subscribe<DebugSnapshotAvailableEvent>(e => server.Send(new SyncWorldDebugSnapshot(e.Snapshot)))
+            events.Subscribe<DebugSnapshotAvailableEvent>(e => server.SendAll(new SyncWorldDebugSnapshot(e.Snapshot)))
         ];
     }
 

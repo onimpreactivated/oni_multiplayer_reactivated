@@ -118,7 +118,11 @@ public class SteamServer : IMultiplayerServer {
         SendCommand(command, MultiplayerCommandOptions.None, connections);
     }
 
-    public void Send(IMultiplayerCommand command, MultiplayerCommandOptions options) {
+    public void SendAll(IMultiplayerCommand command) => Send(command, MultiplayerCommandOptions.None);
+
+    public void Send(IMultiplayerCommand command) => Send(command,MultiplayerCommandOptions.SkipHost);
+
+    private void Send(IMultiplayerCommand command, MultiplayerCommandOptions options) {
         IEnumerable<KeyValuePair<IMultiplayerClientId, HSteamNetConnection>> recipients = clients;
         if (options.HasFlag(MultiplayerCommandOptions.SkipHost))
             recipients = recipients.Where(entry => !entry.Key.Equals(currentPlayer));

@@ -28,6 +28,7 @@ public class ChoresPatcher {
 
     private readonly Harmony harmony;
     private List<Type> supportedTypes = [];
+    private readonly List<IChoreConfigurer> configurers;
 
     private readonly Core.Logging.Logger log = LoggerFactory.GetLogger<ChoresPatcher>();
 
@@ -35,31 +36,25 @@ public class ChoresPatcher {
         EventDispatcher events,
         Harmony harmony,
         StateMachinesPatcher patcher,
-        MultiplayerObjects objects
+        MultiplayerObjects objects,
+        List<IChoreConfigurer> configurers
     ) {
         ChoresPatcher.events = events;
         ChoresPatcher.objects = objects;
         this.harmony = harmony;
-        ChoresMultiplayerConfiguration.Configuration
-            .Select(it => it.StatesConfigurer)
-            .NotNull()
-            .ForEach(patcher.Register);
+        this.configurers = configurers;
         events.Subscribe<RuntimeReadyEvent>(OnRuntimeReady);
     }
 
     private void OnRuntimeReady(RuntimeReadyEvent @event) {
         var postfix = new HarmonyMethod(SymbolExtensions.GetMethodInfo(() => ChoreConstructorPostfix(null!, null!)));
 
-        supportedTypes = ChoresMultiplayerConfiguration.Configuration
-            .Select(it => it.ChoreType)
-            .NotNull()
-            .ToList();
-
+        supportedTypes = configurers.Select(it => it.ChoreType).NotNull().ToList();
         supportedTypes
             .Select(it => it.GetConstructors()[0])
             .ForEach(it => harmony.CreateProcessor(it).AddPostfix(postfix).Patch());
 
-        log.Info($"{ChoresMultiplayerConfiguration.Configuration.Length} chore types patched");
+        log.Info($"{supportedTypes.Count} chore types patched:\n\t{string.Join("\n\t", supportedTypes.Select(it => it.GetSignature()))}");
 
         harmony.CreateProcessor(typeof(Chore).GetConstructors()[0])
             .AddPostfix(SymbolExtensions.GetMethodInfo(() => AddMultiplayerPreconditions(null!)))

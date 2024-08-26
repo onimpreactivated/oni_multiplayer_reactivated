@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using MultiplayerMod.Core.Extensions;
 using MultiplayerMod.Core.Logging;
+using MultiplayerMod.Core.Reflection;
 using MultiplayerMod.Game.NameOf;
 
 namespace MultiplayerMod.Multiplayer.StateMachines.RuntimeTools;
@@ -18,14 +20,14 @@ public class StateMachineContextRuntimeTools {
     private readonly Type supportedParameterType = typeof(StateMachine<,,,>.Parameter<>);
 
     private readonly StateMachine.Parameter.Context context;
-    private readonly MethodInfo setMethod;
+    private readonly DynamicMethodDelegate setMethod;
 
     private StateMachineContextRuntimeTools(StateMachine.Parameter.Context context) {
         this.context = context;
-        setMethod = context.GetType().GetMethod(
+        setMethod = new DynamicMethodDelegate(context, context.GetType().GetMethod(
             nameof(StateMachineMemberReference.Parameter.Context.Set),
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-        )!;
+        )!);
     }
 
     public bool Set(StateMachine.Instance instance, object? value) {
@@ -42,7 +44,7 @@ public class StateMachineContextRuntimeTools {
             );
             return false;
         }
-        setMethod.Invoke(context, [value, instance, false]);
+        setMethod.Invoke(value, instance, false);
         return true;
     }
 
