@@ -1,21 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using MultiplayerMod.Core.Collections;
-using MultiplayerMod.Core.Dependency;
 using MultiplayerMod.Core.Extensions;
 using MultiplayerMod.Core.Logging;
 using MultiplayerMod.Core.Scheduling;
 using MultiplayerMod.Core.Unity;
+using MultiplayerMod.ModRuntime.StaticCompatibility;
 using MultiplayerMod.Multiplayer.Commands;
 using MultiplayerMod.Multiplayer.Commands.Registry;
 using MultiplayerMod.Network;
-using MultiplayerMod.Platform.Steam.Network.Components;
-using MultiplayerMod.Platform.Steam.Network.Messaging;
+using MultiplayerMod.Platform.Common.Network;
+using MultiplayerMod.Platform.Common.Network.Components;
+using MultiplayerMod.Platform.Common.Network.Messaging;
 using Steamworks;
 using UnityEngine;
 using static Steamworks.Constants;
@@ -25,7 +25,6 @@ using static Steamworks.ESteamNetworkingConnectionState;
 
 namespace MultiplayerMod.Platform.Steam.Network;
 
-[Dependency, UsedImplicitly]
 public class SteamServer : IMultiplayerServer {
 
     public MultiplayerServerState State { private set; get; } = MultiplayerServerState.Stopped;
@@ -69,6 +68,8 @@ public class SteamServer : IMultiplayerServer {
 
     private GameObject? gameObject;
 
+    public SteamServer() : this(Dependencies.Get<SteamLobby>(), Dependencies.Get<UnityTaskScheduler>(), Dependencies.Get<MultiplayerCommandRegistry>()) { }
+
     public SteamServer(SteamLobby lobby, UnityTaskScheduler scheduler, MultiplayerCommandRegistry commands) {
         this.lobby = lobby;
         this.scheduler = scheduler;
@@ -88,7 +89,7 @@ public class SteamServer : IMultiplayerServer {
             SetState(MultiplayerServerState.Error);
             throw;
         }
-        gameObject = UnityObject.CreateStaticWithComponent<SteamServerComponent>();
+        gameObject = UnityObject.CreateStaticWithComponent<ServerComponent>();
     }
 
     public void Stop() {
@@ -132,7 +133,7 @@ public class SteamServer : IMultiplayerServer {
     }
 
     private void Initialize() {
-        steamServersConnectedCallback = Callback<SteamServersConnected_t>
+         steamServersConnectedCallback = Callback<SteamServersConnected_t>
             .CreateGameServer(_ => ConnectedToSteamCallback());
 
         lobbyCompletionSource = new TaskCompletionSource<bool>();

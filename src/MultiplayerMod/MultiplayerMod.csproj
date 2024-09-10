@@ -65,5 +65,6 @@
       <PackageReference Include="AssemblyExposer.MSBuild.Task" Version="0.1.5" Private="true" />
       <PackageReference Include="AttributeProcessor.Annotations" Version="0.1.0" ExcludeAssets="runtime"/>
       <PackageReference Include="AttributeProcessor.MSBuild.Task" Version="0.1.3" />
+      <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
     </ItemGroup>
 </Project>

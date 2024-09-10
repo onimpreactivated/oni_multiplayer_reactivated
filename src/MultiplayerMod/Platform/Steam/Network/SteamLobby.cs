@@ -1,9 +1,9 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 using MultiplayerMod.Core.Dependency;
 using MultiplayerMod.Core.Logging;
 using Steamworks;
 
-namespace MultiplayerMod.Platform.Steam.Network;
+namespace MultiplayerMod.Platform.Common.Network;
 
 [Dependency, UsedImplicitly]
 public class SteamLobby {

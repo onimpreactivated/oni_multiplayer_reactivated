@@ -1,4 +1,4 @@
-﻿using MultiplayerMod.Platform.Steam.Network.Messaging;
+using MultiplayerMod.Platform.Common.Network.Messaging;
 using Steamworks;
 
 namespace MultiplayerMod.Platform.Steam.Network;

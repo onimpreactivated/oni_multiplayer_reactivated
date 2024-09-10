@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using MultiplayerMod.Multiplayer.Objects.Extensions;
 using MultiplayerMod.Multiplayer.Objects.Reference;
-using MultiplayerMod.Platform.Steam.Network.Messaging.Surrogates;
+using MultiplayerMod.Platform.Common.Network.Messaging.Surrogates;
 using UnityEngine;
 
 namespace MultiplayerMod.Multiplayer.Commands;

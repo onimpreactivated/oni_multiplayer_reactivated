@@ -1,7 +1,7 @@
-﻿using System.IO;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using MultiplayerMod.Multiplayer.Commands;
-using MultiplayerMod.Platform.Steam.Network.Messaging.Surrogates;
+using MultiplayerMod.Platform.Common.Network.Messaging.Surrogates;
 
 namespace MultiplayerMod.Test.Environment.Network;
 

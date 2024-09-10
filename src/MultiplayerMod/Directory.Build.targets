@@ -43,6 +43,10 @@
         <Copy SourceFiles="$(SourceDir)mod.yaml" DestinationFolder="$(TargetDir)"/>
     </Target>
 
+    <Target Name="CopyLanConfigExample" AfterTargets="Build">
+        <Copy SourceFiles="$(SourceDir)lanconfig.example.txt" DestinationFolder="$(TargetDir)"/>
+    </Target>
+
     <Target Name="GenerateModInfo" AfterTargets="Build">
         <Message Text="Generating mod_info.yaml"/>
         <ItemGroup>
@@ -62,10 +66,11 @@
     <Target Name="CreateReleasePackage"
             Condition="'$(Configuration)' == 'Publish'"
             AfterTargets="Build"
-            DependsOnTargets="CopyModDescription; GenerateModInfo"
+            DependsOnTargets="CopyModDescription; CopyLanConfigExample; GenerateModInfo"
     >
         <ItemGroup>
             <ModFiles Include="$(TargetDir)*.yaml"/>
+            <ModFiles Include="$(TargetDir)*.txt"/>
             <ModFiles Include="$(TargetDir)*.dll"/>
             <Scripts Include="$(SourceDir)..\..\scripts\*.*"/>
         </ItemGroup>

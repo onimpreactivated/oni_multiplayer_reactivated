@@ -1,22 +1,21 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
-using JetBrains.Annotations;
-using MultiplayerMod.Core.Dependency;
 using MultiplayerMod.Core.Extensions;
 using MultiplayerMod.Core.Logging;
 using MultiplayerMod.Core.Unity;
+using MultiplayerMod.ModRuntime.StaticCompatibility;
 using MultiplayerMod.Multiplayer.Commands;
 using MultiplayerMod.Network;
-using MultiplayerMod.Platform.Steam.Network.Components;
-using MultiplayerMod.Platform.Steam.Network.Messaging;
+using MultiplayerMod.Platform.Common.Network.Messaging;
+using MultiplayerMod.Platform.Common.Network.Components;
 using Steamworks;
 using UnityEngine;
 using static Steamworks.Constants;
 using static Steamworks.ESteamNetConnectionEnd;
+using MultiplayerMod.Platform.Common.Network;
 
 namespace MultiplayerMod.Platform.Steam.Network;
 
-[Dependency, UsedImplicitly]
 public class SteamClient : IMultiplayerClient {
 
     public IMultiplayerClientId Id => playerContainer.Value;
@@ -37,6 +36,8 @@ public class SteamClient : IMultiplayerClient {
     private readonly SteamNetworkingConfigValue_t[] networkConfig = { Configuration.SendBufferSize() };
 
     private GameObject gameObject = null!;
+
+    public SteamClient() : this(Dependencies.Get<SteamLobby>()) { }
 
     public SteamClient(SteamLobby lobby) {
         this.lobby = lobby;
@@ -87,6 +88,8 @@ public class SteamClient : IMultiplayerClient {
         if (State != MultiplayerClientState.Connected)
             throw new NetworkPlatformException("Client not connected");
 
+        log.Debug("Client sending command " + command.GetType() + ". Client " + Id + ".");
+
         messageFactory.Create(command, options).ForEach(
             handle => {
                 var result = SteamNetworkingSockets.SendMessageToConnection(
@@ -124,7 +127,7 @@ public class SteamClient : IMultiplayerClient {
 
         SetRichPresence();
 
-        gameObject = UnityObject.CreateStaticWithComponent<SteamClientComponent>();
+        gameObject = UnityObject.CreateStaticWithComponent<ClientComponent>();
         SetState(MultiplayerClientState.Connected);
     }
 
