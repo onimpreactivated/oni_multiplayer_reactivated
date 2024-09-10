@@ -8,7 +8,7 @@ using MultiplayerMod.Game.Chores.Types;
 using MultiplayerMod.Multiplayer.Commands;
 using MultiplayerMod.Multiplayer.Objects.Extensions;
 using MultiplayerMod.Network;
-using MultiplayerMod.Platform.Steam.Network.Messaging;
+using MultiplayerMod.Platform.Common.Network.Messaging;
 using MultiplayerMod.Test.Environment.Patches;
 using MultiplayerMod.Test.GameRuntime;
 using MultiplayerMod.Test.GameRuntime.Patches;

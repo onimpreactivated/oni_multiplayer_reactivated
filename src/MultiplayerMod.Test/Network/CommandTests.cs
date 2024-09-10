@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MultiplayerMod.Multiplayer.Commands;
 using MultiplayerMod.Network;
-using MultiplayerMod.Platform.Steam.Network;
-using MultiplayerMod.Platform.Steam.Network.Messaging;
+using MultiplayerMod.Platform.Common;
+using MultiplayerMod.Platform.Common.Network.Messaging;
 using NUnit.Framework;
 
 namespace MultiplayerMod.Test.Network;

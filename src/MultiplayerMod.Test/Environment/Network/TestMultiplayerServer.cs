@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MultiplayerMod.Core.Extensions;
@@ -111,6 +111,10 @@ public class TestMultiplayerServer : IMultiplayerServer {
         } finally {
             oldRuntime.Activate();
         }
+    }
+
+    public void Tick()
+    {
     }
 
 }

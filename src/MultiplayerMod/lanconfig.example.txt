@@ -1,0 +1,5 @@
+# To use a lan connection instead of the steam lobby, rename this file to lanconfig.txt and enter the ip of the host machine.
+# You may also wish to enter a name you'd like to use.
+playername=LanPlayer
+hostip=192.168.1.1
+hostport=7171

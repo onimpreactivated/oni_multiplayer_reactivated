@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using MultiplayerMod.Core.Logging;
-using MultiplayerMod.Platform.Steam.Network.Messaging.Surrogates;
+using MultiplayerMod.Platform.Common.Network.Messaging.Surrogates;
 using UnityEngine;
 
 namespace MultiplayerMod.Core.Patch;

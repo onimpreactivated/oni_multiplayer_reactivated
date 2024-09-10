@@ -17,7 +17,7 @@ using MultiplayerMod.Multiplayer.Objects.Extensions;
 using MultiplayerMod.Multiplayer.StateMachines;
 using MultiplayerMod.Multiplayer.StateMachines.Configuration;
 using MultiplayerMod.Network;
-using MultiplayerMod.Platform.Steam.Network.Messaging;
+using MultiplayerMod.Platform.Common.Network.Messaging;
 using MultiplayerMod.Test.Environment;
 using MultiplayerMod.Test.Environment.Network;
 using MultiplayerMod.Test.Environment.Patches;

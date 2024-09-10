@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MultiplayerMod.Multiplayer.Commands;
 
@@ -14,6 +14,7 @@ public interface IMultiplayerServer {
 
     void Send(IMultiplayerClientId clientId, IMultiplayerCommand command);
     void Send(IMultiplayerCommand command, MultiplayerCommandOptions options = MultiplayerCommandOptions.None);
+    void Tick();
 
     event Action<MultiplayerServerState> StateChanged;
     event Action<IMultiplayerClientId> ClientConnected;

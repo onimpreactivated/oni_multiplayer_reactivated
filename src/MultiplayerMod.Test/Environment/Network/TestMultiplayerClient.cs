@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MultiplayerMod.ModRuntime;
 using MultiplayerMod.Multiplayer.Commands;
@@ -81,6 +81,10 @@ public class TestMultiplayerClient : IMultiplayerClient {
         } finally {
             oldRuntime.Activate();
         }
+    }
+
+    public void Tick()
+    {
     }
 
 }
