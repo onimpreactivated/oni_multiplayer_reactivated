@@ -127,7 +127,7 @@ public class FindNextChore : MultiplayerCommand {
         string serverChoreType,
         ref Chore? choreWithIdCollision
     ) {
-        var chores = instance.GetProviders()
+        var chores = instance.providers
             .SelectMany(provider => provider.choreWorldMap.Values.SelectMany(x => x))
             .ToArray();
         return FindFullMatch(
@@ -149,7 +149,7 @@ public class FindNextChore : MultiplayerCommand {
         var globalChores =
             Object.FindObjectsOfType<ChoreConsumer>()
                 .SelectMany(
-                    consumer => consumer.GetProviders()
+                    consumer => consumer.providers
                         .SelectMany(provider => provider.choreWorldMap.Values.SelectMany(x => x)).ToArray()
                 ).ToArray();
 

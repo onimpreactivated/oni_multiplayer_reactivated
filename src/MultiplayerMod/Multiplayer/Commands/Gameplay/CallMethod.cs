@@ -12,12 +12,17 @@ public class CallMethod : MultiplayerCommand {
     private readonly StateMachineReference? stateMachineTarget;
     private readonly Type methodType;
     private readonly string methodName;
+    private readonly Type[]? parameters;
     private readonly object[] args;
+
+    private const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
+                                       BindingFlags.DeclaredOnly;
 
     public CallMethod(ComponentEventsArgs eventArgs) {
         componentTarget = eventArgs.Target;
         methodType = eventArgs.MethodType;
         methodName = eventArgs.MethodName;
+        parameters = eventArgs.Parameters;
         args = eventArgs.Args;
     }
 
@@ -29,12 +34,9 @@ public class CallMethod : MultiplayerCommand {
     }
 
     public override void Execute(MultiplayerCommandContext context) {
-        var method = methodType
-            .GetMethod(
-                methodName,
-                BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
-                BindingFlags.DeclaredOnly
-            );
+        var method = parameters == null
+            ? methodType.GetMethod(methodName, flags)
+            : methodType.GetMethod(methodName, flags, null, parameters, null);
         var args = this.args.Select(
             arg =>
                 arg switch {

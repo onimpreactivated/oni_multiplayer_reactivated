@@ -39,7 +39,7 @@ public static class BuildEvents {
         result.Add(new CodeInstruction(OpCodes.Ldc_I4_0));
         result.Add(new CodeInstruction(OpCodes.Stloc_S, asyncReplace));
 
-        result.AddConditional(source, it => it.IsStoreToLocal(4));
+        result.AddConditional(source, it => it.IsStoreToLocal(5));
 
         // replaced = true;
         result.Add(new CodeInstruction(OpCodes.Ldc_I4_1));

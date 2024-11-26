@@ -13,13 +13,15 @@ public class PatchTargetResolver {
 
     private static readonly Logging.Logger log = LoggerFactory.GetLogger<PatchTargetResolver>();
 
-    private readonly Dictionary<Type, List<string>> targets;
+    private readonly Dictionary<Type, List<MemberReference>> targets;
     private readonly IEnumerable<Type> baseTypes;
     private readonly Assembly assembly = Assembly.GetAssembly(typeof(global::Game));
     private bool checkArgumentsSerializable;
 
+    private const BindingFlags instanceBindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+
     private PatchTargetResolver(
-        Dictionary<Type, List<string>> targets,
+        Dictionary<Type, List<MemberReference>> targets,
         IEnumerable<Type> baseTypes,
         bool checkArgumentsSerializable
     ) {
@@ -53,40 +55,40 @@ public class PatchTargetResolver {
             .SelectMany(
                 type => {
                     if (classTypes.Contains(type))
-                        return targets[type].Select(methodName => GetMethodOrSetter(type, methodName, null));
+                        return targets[type].Select(it => GetMethodOrSetter(type, it, null));
 
                     var implementedInterfaces = GetImplementedInterfaces(interfaceTypes, type);
                     return implementedInterfaces.SelectMany(
                         implementedInterface => targets[implementedInterface].Select(
-                            methodName => GetMethodOrSetter(type, methodName, implementedInterface)
+                            it => GetMethodOrSetter(type, it, implementedInterface)
                         )
                     );
                 }
             ).ToList();
     }
 
-    private MethodBase GetMethodOrSetter(Type type, string methodName, Type? interfaceType) {
-        var methodInfo = GetMethod(type, methodName, interfaceType);
+    private MethodBase GetMethodOrSetter(Type type, MemberReference reference, Type? interfaceType) {
+        var methodInfo = GetMethod(type, reference, interfaceType);
         if (methodInfo != null) {
             if (checkArgumentsSerializable)
                 ValidateArguments(methodInfo);
             return methodInfo;
         }
 
-        var property = GetSetter(type, methodName, interfaceType);
+        var property = GetSetter(type, reference.Name, interfaceType);
         if (property != null)
             return property;
 
-        var message = $"Method {type}.{methodName} ({interfaceType}) not found";
+        var message = $"Method {type}.{reference.Name} ({interfaceType}) not found";
         log.Error(message);
         throw new Exception(message);
     }
 
-    private MethodBase? GetMethod(Type type, string methodName, Type? interfaceType) {
-        var methodInfo = type.GetMethod(
-            methodName,
-            BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance
-        );
+    private MethodBase? GetMethod(Type type, MemberReference reference, Type? interfaceType) {
+        var methodInfo = reference.Parameters == null
+            ? type.GetMethod(reference.Name, instanceBindingFlags)
+            : type.GetMethod(reference.Name, instanceBindingFlags, null, reference.Parameters, null);
+
         if (methodInfo != null)
             return methodInfo;
 
@@ -94,10 +96,10 @@ public class PatchTargetResolver {
             return null;
 
         // Some overrides names prefixed by interface e.g. Clinic#ISliderControl.SetSliderValue
-        methodInfo = type.GetMethod(
-            interfaceType.Name + "." + methodName,
-            BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance
-        );
+        methodInfo = reference.Parameters == null
+            ? type.GetMethod(interfaceType.Name + "." + reference.Name, instanceBindingFlags)
+            : type.GetMethod(interfaceType.Name + "." + reference.Name, instanceBindingFlags, null, reference.Parameters, null);
+
         return methodInfo;
     }
 
@@ -163,23 +165,38 @@ public class PatchTargetResolver {
         throw new Exception(message);
     }
 
+    public class MemberReference {
+        public string Name { get; }
+        public Type[]? Parameters { get; }
+
+        public MemberReference(string name, Type[]? parameters) {
+            Name = name;
+            Parameters = parameters;
+        }
+    }
+
     public class Builder {
 
-        private readonly Dictionary<Type, List<string>> targets = new();
+        private readonly Dictionary<Type, List<MemberReference>> targets = new();
         private readonly List<Type> baseTypes = new();
         private bool checkArgumentsSerializable;
 
-        private List<string> GetTargets(Type type) {
+        private List<MemberReference> GetTargets(Type type) {
             if (targets.TryGetValue(type, out var methods))
                 return methods;
 
-            methods = new List<string>();
+            methods = new List<MemberReference>();
             targets[type] = methods;
             return methods;
         }
 
         public Builder AddMethods(Type type, params string[] methods) {
-            GetTargets(type).AddRange(methods);
+            GetTargets(type).AddRange(methods.Select(name => new MemberReference(name, null)));
+            return this;
+        }
+
+        public Builder AddMethods(Type type, params MemberReference[] references) {
+            GetTargets(type).AddRange(references);
             return this;
         }
 

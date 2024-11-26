@@ -107,6 +107,11 @@
                 <TargetRule>Type, Field</TargetRule>
                 <VisibilityRule>Public</VisibilityRule>
             </ExposureRules>
+            <ExposureRules Include="Protected properties setters and getters">
+                <PatternRule>protected.*?(get|set)_</PatternRule>
+                <TargetRule>Method</TargetRule>
+                <VisibilityRule>Public</VisibilityRule>
+            </ExposureRules>
         </ItemGroup>
         <ExposeAssembly SourceAssemblies="@(ExposeAssemblies)" Rules="@(ExposureRules)"/>
     </Target>

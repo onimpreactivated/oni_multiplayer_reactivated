@@ -71,9 +71,7 @@ public record WorldDebugSnapshot(
         hash = CombineHashCodes(hash, chore.masterPriority.priority_class.GetHashCode());
         hash = CombineHashCodes(hash, chore.masterPriority.priority_value.GetHashCode());
         hash = CombineHashCodes(hash, chore.IsPreemptable.GetHashCode());
-        hash = CombineHashCodes(hash, chore.priorityMod.GetHashCode());
-        hash = CombineHashCodes(hash, chore.addToDailyReport.GetHashCode());
-        return CombineHashCodes(hash, chore.reportType.GetHashCode());
+        return CombineHashCodes(hash, chore.priorityMod.GetHashCode());
     }
 
     private static unsafe int[] HashBatches<T>(T* objects) where T : unmanaged {

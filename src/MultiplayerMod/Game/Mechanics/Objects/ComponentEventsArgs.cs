@@ -7,5 +7,6 @@ public record ComponentEventsArgs(
     ComponentReference Target,
     Type MethodType,
     string MethodName,
+    Type[] Parameters,
     object[] Args
 );

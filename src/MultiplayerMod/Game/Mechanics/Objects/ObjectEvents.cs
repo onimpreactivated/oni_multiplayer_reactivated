@@ -2,22 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using MultiplayerMod.Core.Patch;
 using MultiplayerMod.ModRuntime.Context;
 using MultiplayerMod.ModRuntime.StaticCompatibility;
 using MultiplayerMod.Multiplayer.Objects;
 using UnityEngine;
+using static MultiplayerMod.Core.Patch.PatchTargetResolver;
 
 namespace MultiplayerMod.Game.Mechanics.Objects;
 
 [HarmonyPatch]
 public static class ObjectEvents {
 
+    private static readonly ConditionalWeakTable<MethodBase, Type[]> methodParametersCache = new();
+
     public static event Action<ComponentEventsArgs>? ComponentMethodCalled;
     public static event Action<StateMachineEventsArgs>? StateMachineMethodCalled;
 
-    private static readonly PatchTargetResolver targets = new PatchTargetResolver.Builder()
+    private static readonly PatchTargetResolver targets = new Builder()
         .AddMethods(typeof(Filterable), nameof(Filterable.SelectedTag))
         .AddMethods(
             typeof(TreeFilterable),
@@ -86,7 +90,8 @@ public static class ObjectEvents {
         )
         .AddMethods(typeof(ISidescreenButtonControl), nameof(ISidescreenButtonControl.OnSidescreenButtonPressed))
         .AddMethods(typeof(IUserControlledCapacity), nameof(IUserControlledCapacity.UserMaxCapacity))
-        .AddMethods(typeof(Assignable), nameof(Assignable.Assign), nameof(Assignable.Unassign))
+        .AddMethods(typeof(Assignable), new MemberReference(nameof(Assignable.Assign), new[] { typeof(IAssignableIdentity) } ))
+        .AddMethods(typeof(Assignable), nameof(Assignable.Unassign))
         .AddMethods(
             typeof(AccessControl),
             nameof(AccessControl.SetPermission),
@@ -148,11 +153,16 @@ public static class ObjectEvents {
         ).ToArray();
         switch (__instance) {
             case KMonoBehaviour kMonoBehaviour:
+                if (!methodParametersCache.TryGetValue(__originalMethod, out var parameters)) {
+                    parameters = __originalMethod.GetParameters().Select(it => it.ParameterType).ToArray();
+                    methodParametersCache.Add(__originalMethod, parameters);
+                }
                 ComponentMethodCalled?.Invoke(
                     new ComponentEventsArgs(
                         kMonoBehaviour.GetReference(),
                         __originalMethod.DeclaringType!,
                         __originalMethod.Name,
+                        parameters,
                         args
                     )
                 );
