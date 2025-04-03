@@ -1,0 +1,7 @@
+SafeCellMonitor
+FetchChore
+EatChore
+WorkChore<Diggable>
+WorkChore<AutoDisinfectable>
+WorkChore<ToiletWorkableClean>
+FetchAreaChore

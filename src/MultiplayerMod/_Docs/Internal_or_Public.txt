@@ -1,0 +1,9 @@
+Internal or Public?
+What should I set as the class access?
+
+Everything in these folders must be internal:
+- Commands
+- Patches
+- EventCalls
+
+Otherwise use what you think worth third party accessing.

@@ -1,0 +1,5 @@
+What is the difference between simple command and event?
+
+Why not combine both?
+Because one should focus on regular events and the other should focus on multiplayer related actions.
+Might be combined both later on with a simple new command.

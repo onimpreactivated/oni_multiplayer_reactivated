@@ -1,69 +1,54 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DefineConstants>TRACE;</DefineConstants>
-        <Optimize>false</Optimize>
-        <DebugType>full</DebugType>
-        <DebugSymbols>true</DebugSymbols>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <DefineConstants/>
-        <Optimize>false</Optimize>
-        <DebugType>portable</DebugType>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Publish' ">
-        <DefineConstants/>
-        <Optimize>true</Optimize>
-        <DebugType>none</DebugType>
-    </PropertyGroup>
-    <PropertyGroup>
-        <Nullable>enable</Nullable>
-        <WarningsAsErrors>Nullable</WarningsAsErrors>
-        <Configurations>Debug;Release;Publish</Configurations>
-        <Platforms>AnyCPU</Platforms>
-    </PropertyGroup>
-    <PropertyGroup>
-        <AssemblyName>MultiplayerMod</AssemblyName>
-        <AssemblyTitle>Multiplayer Mod for Oxygen Not Included</AssemblyTitle>
-        <Copyright>MIT License (C) ONIMP Team</Copyright>
-        <Company>ONIMP Team</Company>
-        <RepositoryUrl>https://github.com/onimp/oni_multiplayer</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-    </PropertyGroup>
-    <PropertyGroup>
-        <OniSupportedContent>VANILLA_ID</OniSupportedContent>
-        <OniMinimumSupportedBuild>577063</OniMinimumSupportedBuild>
-        <OniApiVersion>2</OniApiVersion>
-    </PropertyGroup>
-    <ItemGroup>
-        <Content Include="$(UserProfile)\AppData\LocalLow\Klei\Oxygen Not Included\Player.log">
-            <Link>_logs/Player.log</Link>
-        </Content>
-        <Content Include="$(UserProfile)\AppData\LocalLow\Klei\Oxygen Not Included\VM\Player.log">
-            <Link>_logs/VM Player.log</Link>
-        </Content>
-    </ItemGroup>
-    <ItemGroup>
-        <Reference Include="Assembly-CSharp" HintPath="$(ExposedLibrariesPath)\Assembly-CSharp.dll" Private="false" />
-        <Reference Include="Assembly-CSharp-firstpass" HintPath="$(ExposedLibrariesPath)\Assembly-CSharp-firstpass.dll" Private="false" />
-        <Reference Include="UnityEngine.CoreModule" HintPath="$(ExposedLibrariesPath)\UnityEngine.CoreModule.dll" Private="false" />
-        <Reference Include="UnityEngine.UI" HintPath="$(ExposedLibrariesPath)\UnityEngine.UI.dll" Private="false" />
-        <Reference Include="0Harmony" HintPath="$(ExposedLibrariesPath)\0Harmony.dll" Private="false" />
-    </ItemGroup>
-    <ItemGroup>
-        <Reference Include="com.rlabrecque.steamworks.net" HintPath="$(ManagedPath)\com.rlabrecque.steamworks.net.dll" Private="false" />
-        <Reference Include="UnityEngine" HintPath="$(ManagedPath)\UnityEngine.dll" Private="false" />
-        <Reference Include="Unity.TextMeshPro" HintPath="$(ManagedPath)\Unity.TextMeshPro.dll" Private="false" />
-        <Reference Include="UnityEngine.ImageConversionModule" HintPath="$(ManagedPath)\UnityEngine.ImageConversionModule.dll" Private="false" />
-        <Reference Include="UnityEngine.IMGUIModule" HintPath="$(ManagedPath)\UnityEngine.IMGUIModule.dll" Private="false" />
-        <Reference Include="UnityEngine.UIModule" HintPath="$(ManagedPath)\UnityEngine.UIModule.dll" Private="false" />
-        <Reference Include="ImGui.NET" HintPath="$(ManagedPath)\ImGui.NET.dll" Private="false" />
-    </ItemGroup>
-    <ItemGroup Condition=" $(DefineConstants.Contains('TCP_LOGGING')) ">
-        <Reference Include="Newtonsoft.Json.dll" HintPath="$(ManagedPath)\Newtonsoft.Json.dll" Private="false" />
-    </ItemGroup>
-    <ItemGroup>
-      <PackageReference Include="AssemblyExposer.MSBuild.Task" Version="0.1.5" Private="true" />
-      <PackageReference Include="AttributeProcessor.Annotations" Version="0.1.0" ExcludeAssets="runtime"/>
-      <PackageReference Include="AttributeProcessor.MSBuild.Task" Version="0.1.3" />
-    </ItemGroup>
+
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<LangVersion>12</LangVersion>
+		<AssemblyName>MultiplayerMod</AssemblyName>
+		<AssemblyTitle>Multiplayer Mod for Oxygen Not Included</AssemblyTitle>
+		<Copyright>MIT License (C) ONIMP Team</Copyright>
+        	<Company>ONIMP Team</Company>
+        	<RepositoryUrl>https://github.com/onimpreactivated/oni_multiplayer_reactivated</RepositoryUrl>
+        	<RepositoryType>git</RepositoryType>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+        	<FileVersion>0.0.0</FileVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<OniSupportedContent>ALL</OniSupportedContent>
+		<OniMinimumSupportedBuild>651155</OniMinimumSupportedBuild>
+		<OniApiVersion>2</OniApiVersion>
+	</PropertyGroup>
+
+	<!-- Here is the references for making this works. -->
+	<ItemGroup>
+		<!-- This package is used to publicize the assembly. -->
+		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" ExcludeAssets="runtime" ReferenceOutputAssembly="false" Private="true" />
+		<Reference Include="Assembly-CSharp" HintPath="$(ReferencePath)\Assembly-CSharp.dll" Private="false" Publicize="true" />
+		<Reference Include="Assembly-CSharp-firstpass" HintPath="$(ReferencePath)\Assembly-CSharp-firstpass.dll" Private="false" Publicize="true" />
+		<Reference Include="UnityEngine.CoreModule" HintPath="$(ReferencePath)\UnityEngine.CoreModule.dll" Private="false" Publicize="true" />
+		<Reference Include="UnityEngine.UI" HintPath="$(ReferencePath)\UnityEngine.UI.dll" Private="false" Publicize="true" />
+		<Reference Include="0Harmony" HintPath="$(ReferencePath)\0Harmony.dll" Private="false" Publicize="true" />
+		<Reference Include="com.rlabrecque.steamworks.net" HintPath="$(ReferencePath)\com.rlabrecque.steamworks.net.dll" Private="false" />
+		<Reference Include="UnityEngine" HintPath="$(ReferencePath)\UnityEngine.dll" Private="false" />
+		<Reference Include="Unity.TextMeshPro" HintPath="$(ReferencePath)\Unity.TextMeshPro.dll" Private="false" />
+		<Reference Include="UnityEngine.ImageConversionModule" HintPath="$(ReferencePath)\UnityEngine.ImageConversionModule.dll" Private="false" />
+		<Reference Include="UnityEngine.IMGUIModule" HintPath="$(ReferencePath)\UnityEngine.IMGUIModule.dll" Private="false" />
+		<Reference Include="UnityEngine.UIModule" HintPath="$(ReferencePath)\UnityEngine.UIModule.dll" Private="false" />
+		<Reference Include="ImGui.NET" HintPath="$(ReferencePath)\ImGui.NET.dll" Private="false" />
+	</ItemGroup>
+
+	<!-- Empty directories show to VS -->
+	<ItemGroup>
+	  <Folder Include="Network\Epic\" />
+	</ItemGroup>
+
+	<!-- This requires to make the $(ReferencePath) works, and also available assembly when building -->
+	<Import Project="MultiplayerMod.props.user" />
+	<PropertyGroup>
+		<AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
+	</PropertyGroup>
+
+	<!-- Show log files in client. -->
 </Project>

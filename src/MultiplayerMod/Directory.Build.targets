@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
-
     <Target Name="SetVersionAttributes" BeforeTargets="InitializeSourceControlInformation">
         <Exec Command="git rev-parse --is-inside-work-tree" IgnoreExitCode="True">
             <Output PropertyName="GitWorkTreeExitCode" TaskParameter="ExitCode"/>
@@ -30,6 +28,9 @@
         <CreateProperty Value="$([System.Text.RegularExpressions.Regex]::Match($(GitVersion), \d+\.\d+.\d+))">
             <Output TaskParameter="Value" PropertyName="GitNumericVersion"/>
         </CreateProperty>
+        <PropertyGroup Condition="$(GitNumericVersion) == ''">
+            <GitNumericVersion>0.0.0</GitNumericVersion>
+        </PropertyGroup>
         <PropertyGroup>
             <BuildVersion>$(GitVersion)-$(GitRevision)</BuildVersion>
             <InformationalVersion>$(BuildVersion)</InformationalVersion>
@@ -37,6 +38,8 @@
             <AssemblyVersion>$(GitNumericVersion)</AssemblyVersion>
         </PropertyGroup>
         <Message Text="Build version = $(InformationalVersion)" Importance="high"/>
+        <Message Text="Git version = $(GitVersion)" Importance="high"/>
+        <Message Text="Git Numeric version = $(GitNumericVersion)" Importance="high"/>
     </Target>
 
     <Target Name="CopyModDescription" AfterTargets="Build">
@@ -75,25 +78,6 @@
                       DestinationFile="$(TargetDir)multiplayer-mod-$(GitVersion).zip"
                       Overwrite="true"
         />
-    </Target>
-
-    <Target Name="InstallMod"
-            AfterTargets="AfterBuild"
-            Condition="'$(Configuration)' == 'Debug'"
-            DependsOnTargets="CopyModDescription; GenerateModInfo"
-    >
-        <Message Text="Copy mod files to ONI mods directory"/>
-        <ItemGroup>
-            <ModFiles Include="$(TargetDir)*.*"/>
-        </ItemGroup>
-        <Copy SourceFiles="@(ModFiles)" DestinationFolder="$(ModInstallationPath)"/>
-    </Target>
-
-    <Target Name="ProcessAttributes" AfterTargets="PostBuildEvent">
-        <ItemGroup>
-            <SearchPaths Include="$(ManagedPath)"/>
-        </ItemGroup>
-        <ProcessAttributes AssemblyPath="$(TargetPath)" AssemblySearchPaths="@(SearchPaths)"/>
     </Target>
 
 </Project>

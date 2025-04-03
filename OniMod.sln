@@ -5,25 +5,21 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiplayerMod", "src\MultiplayerMod\MultiplayerMod.csproj", "{8CF3CE61-EFA2-422A-BDB9-CD8BC5376CCB}"
 EndProject
-Project("{C0999D99-C6B1-4F7D-84EF-280F85768CD7}") = "Assembly-CSharp-firstpass", "src\Assembly-CSharp-firstpass\Assembly-CSharp-firstpass.csproj", "{CBFB9C4F-74EA-4D63-ADA1-80A1C21B41E3}"
-EndProject
-Project("{20A232E7-7449-4BDC-8C56-E1ED6AE24F2A}") = "Assembly-CSharp", "src\Assembly-CSharp\Assembly-CSharp.csproj", "{CBFB9C4F-74EA-4D63-ADA1-80A1C21B41E3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{E643528F-7D08-43AF-8D51-60C6AB5D49EF}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		README.md = README.md
-		Directory.Build.props = Directory.Build.props
-		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiplayerMod.Test", "src\MultiplayerMod.Test\MultiplayerMod.Test.csproj", "{0C3E1EF7-5EFB-4FAC-B676-2C0660E959AA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{3D14A142-7EA5-4D30-B6D9-9DDB1998D450}"
 	ProjectSection(SolutionItems) = preProject
 		docs\CONTRIBUTING.md = docs\CONTRIBUTING.md
+		docs\ChoresToSyncs.txt = docs\ChoresToSyncs.txt
+		docs\Event_vs_Command.txt = docs\Event_vs_Command.txt
+		docs\Internal_or_Public.txt = docs\Internal_or_Public.txt
+		docs\MissingCommands.txt = docs\MissingCommands.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{518908C5-74DD-4F86-B62F-985ABBD320D6}"
@@ -34,34 +30,35 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{5189
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "steamworkshop", "steamworkshop", "{1A260408-1A77-475B-AEF2-C5A9735DA112}"
 	ProjectSection(SolutionItems) = preProject
-		steamworkshop\preview.png = steamworkshop\preview.png
 		steamworkshop\STEAMWORSHOP_DESCRIPTION.md = steamworkshop\STEAMWORSHOP_DESCRIPTION.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiplayerMod.Test", "src\MultiplayerMod.Test\MultiplayerMod.Test.csproj", "{E105629F-8918-4822-8E7A-4627E107606A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Release|Any CPU = Release|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Publish|Any CPU = Publish|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8CF3CE61-EFA2-422A-BDB9-CD8BC5376CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8CF3CE61-EFA2-422A-BDB9-CD8BC5376CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8CF3CE61-EFA2-422A-BDB9-CD8BC5376CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8CF3CE61-EFA2-422A-BDB9-CD8BC5376CCB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8CF3CE61-EFA2-422A-BDB9-CD8BC5376CCB}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
 		{8CF3CE61-EFA2-422A-BDB9-CD8BC5376CCB}.Publish|Any CPU.Build.0 = Publish|Any CPU
-		{0C3E1EF7-5EFB-4FAC-B676-2C0660E959AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C3E1EF7-5EFB-4FAC-B676-2C0660E959AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C3E1EF7-5EFB-4FAC-B676-2C0660E959AA}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
-		{0C3E1EF7-5EFB-4FAC-B676-2C0660E959AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CF3CE61-EFA2-422A-BDB9-CD8BC5376CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CF3CE61-EFA2-422A-BDB9-CD8BC5376CCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E105629F-8918-4822-8E7A-4627E107606A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E105629F-8918-4822-8E7A-4627E107606A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E105629F-8918-4822-8E7A-4627E107606A}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{E105629F-8918-4822-8E7A-4627E107606A}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{E105629F-8918-4822-8E7A-4627E107606A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E105629F-8918-4822-8E7A-4627E107606A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B532045A-7A46-4262-AE5F-F663106A26E5}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal
