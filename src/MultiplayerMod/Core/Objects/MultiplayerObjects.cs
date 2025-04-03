@@ -1,6 +1,6 @@
 using MultiplayerMod.Core.Behaviour;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Arguments.Common;
+using MultiplayerMod.Events.Handlers;
 
 namespace MultiplayerMod.Core.Objects;
 
@@ -18,16 +18,16 @@ public class MultiplayerObjects
     /// </summary>
     public MultiplayerObjects()
     {
-        EventManager.SubscribeEvent<GameObjectCreated>(CreateObjects_Event);
-        EventManager.SubscribeEvent<WorldLoadingEvent>(_ => Clear());
-        EventManager.SubscribeEvent<GameQuitEvent>(_ => Clear());
+        GameEvents.GameObjectCreated += CreateObjects_Event;
+        WorldEvents.WorldLoading += () => { Clear(); };
+        GameEvents.GameQuit += () => { Clear(); };
         var initializer = new SaveGameObjectsInitializer(this);
-        EventManager.SubscribeEvent<WorldSyncEvent>(_ =>
+        WorldEvents.WorldSync += () =>
         {
             Clear(force: false);
             initializer.Initialize();
-        });
-        EventManager.SubscribeEvent<GameReadyEvent>(_ => initializer.Initialize());
+        };
+        GameEvents.GameReady += () => { initializer.Initialize(); };
     }
 
     /// <summary>
@@ -88,9 +88,9 @@ public class MultiplayerObjects
     public IEnumerable<KeyValuePair<object, MultiplayerObject>> GetEnumerable() => index.GetEnumerable();
 
 
-    private void CreateObjects_Event(GameObjectCreated gameObjectCreated)
+    private void CreateObjects_Event(GameObjectArg gameObjectCreated)
     {
-        gameObjectCreated.GameObject.AddComponent<MultiplayerInstance>().Objects = this;
-        gameObjectCreated.GameObject.AddComponent<GridObject>();
+        gameObjectCreated.Value.AddComponent<MultiplayerInstance>().Objects = this;
+        gameObjectCreated.Value.AddComponent<GridObject>();
     }
 }

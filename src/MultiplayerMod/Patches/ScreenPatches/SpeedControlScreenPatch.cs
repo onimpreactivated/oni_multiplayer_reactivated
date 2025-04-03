@@ -1,7 +1,7 @@
 using HarmonyLib;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Execution;
-using MultiplayerMod.Events;
+using MultiplayerMod.Events.Handlers;
 
 namespace MultiplayerMod.Patches.ScreenPatches;
 
@@ -27,7 +27,7 @@ internal static class SpeedControlScreenPatch
             IsSpeedSetByCommand = false;
             return;
         }
-        SpeedControl.OnSpeedControlSetSpeed(Speed);
+        SpeedControlEvents.OnSpeedControlSetSpeed(Speed);
     }
 
     [HarmonyPostfix]
@@ -43,7 +43,7 @@ internal static class SpeedControlScreenPatch
             eventsEnabled = true;
             return;
         }
-        SpeedControl.OnSpeedControlPause();
+        SpeedControlEvents.OnSpeedControlPause();
     }
 
     [HarmonyPostfix]
@@ -56,7 +56,7 @@ internal static class SpeedControlScreenPatch
             return;
         if (!eventsEnabled)
             return;
-        SpeedControl.OnSpeedControlResume();
+        SpeedControlEvents.OnSpeedControlResume();
     }
 
     [HarmonyPrefix]

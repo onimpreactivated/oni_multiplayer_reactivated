@@ -2,12 +2,6 @@ using System.Reflection;
 
 namespace MultiplayerMod.Events.Arguments;
 
-/// <summary>
-/// Arguments supplied for <see cref="Others.ComponentMethodCalled"/>
-/// </summary>
-/// <param name="component"></param>
-/// <param name="method"></param>
-/// <param name="args"></param>
 public class ComponentEventsArgs(KMonoBehaviour component, MethodBase method, object[] args)
 {
     /// <summary>

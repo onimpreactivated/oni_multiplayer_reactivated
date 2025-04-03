@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
@@ -8,11 +8,11 @@
 		<AssemblyName>MultiplayerMod</AssemblyName>
 		<AssemblyTitle>Multiplayer Mod for Oxygen Not Included</AssemblyTitle>
 		<Copyright>MIT License (C) ONIMP Team</Copyright>
-        	<Company>ONIMP Team</Company>
-        	<RepositoryUrl>https://github.com/onimpreactivated/oni_multiplayer_reactivated</RepositoryUrl>
-        	<RepositoryType>git</RepositoryType>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-        	<FileVersion>0.0.0</FileVersion>
+        <Company>ONIMP Team</Company>
+        <RepositoryUrl>https://github.com/onimpreactivated/oni_multiplayer_reactivated</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+		<!--GenerateDocumentationFile>True</GenerateDocumentationFile-->
+        <FileVersion>0.0.0</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>

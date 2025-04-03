@@ -1,11 +1,6 @@
 ﻿namespace MultiplayerMod.Events.Arguments.Common;
 
-public class IntArg : EventArgs
+public class IntArg(int value) : EventArgs
 {
-    public int Value { get; }
-
-    public IntArg(int value)
-    {
-        Value = value;
-    }
+    public int Value { get; } = value;
 }

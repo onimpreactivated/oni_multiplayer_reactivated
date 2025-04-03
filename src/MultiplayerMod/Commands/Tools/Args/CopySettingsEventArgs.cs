@@ -8,14 +8,14 @@ namespace MultiplayerMod.Commands.Tools.Args;
 /// <param name="sourceLayer"></param>
 [Serializable]
 public class CopySettingsEventArgs(
-    DragCompleteEventArgs dragEvent,
+    DragCompleteCommandArgs dragEvent,
     int sourceCell,
     ObjectLayer sourceLayer)
 {
     /// <summary>
     /// Base DragComplete Event argument 
     /// </summary>
-    public DragCompleteEventArgs DragEvent => dragEvent;
+    public DragCompleteCommandArgs DragEvent => dragEvent;
 
     /// <summary>
     /// Source cell to copy from

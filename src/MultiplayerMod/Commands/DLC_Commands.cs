@@ -1,7 +1,6 @@
 using MultiplayerMod.Commands.NetCommands;
 using MultiplayerMod.Core;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Multiplayer.UI.Overlays;
 using MultiplayerMod.Network.Common;
 
@@ -24,7 +23,7 @@ internal class DLC_Commands
         }
         else
         {
-            EventManager.TriggerEvent(new StopMultiplayerEvent());
+            MultiplayerEvents.OnMultiplayerStop();
             MultiplayerStatusOverlay.Show("Server is not compatible with your DLC list.");
         }
     }

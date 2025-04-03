@@ -1,8 +1,7 @@
 using HarmonyLib;
 using MultiplayerMod.Commands.Tools.Args;
 using MultiplayerMod.Core.Execution;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Others;
+using MultiplayerMod.Events.Handlers;
 using System.Reflection;
 using UnityEngine;
 
@@ -91,7 +90,7 @@ internal static class DragToolEvents
                 return;
             AssertSameInstance(instance);
 
-            var args = new DragCompleteEventArgs(
+            var args = new DragCompleteCommandArgs(
                 selection,
                 cursorDown,
                 cursorUp,
@@ -103,8 +102,7 @@ internal static class DragToolEvents
                     _ => null
                 }
             );
-
-            EventManager.TriggerEvent(new DragCompletedEvent(instance, args));
+            ToolEvents.OnDragToolComplete(new(instance, args));
 
             selection.Clear();
             lastTool = null;

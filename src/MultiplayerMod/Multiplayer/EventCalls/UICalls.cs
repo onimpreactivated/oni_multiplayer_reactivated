@@ -1,16 +1,17 @@
 using MultiplayerMod.Commands;
-using MultiplayerMod.Commands.NetCommands;
-using MultiplayerMod.Core;
-using MultiplayerMod.Events.Common;
-using MultiplayerMod.Events.Others;
+using MultiplayerMod.Events.Handlers;
 
 namespace MultiplayerMod.Multiplayer.EventCalls;
 
-internal class UICalls
+internal class UICalls : BaseEventCall
 {
     internal static readonly CommandRateThrottle Throttle10Hz = new(rate: 10);
+    public override void Init()
+    {
+        MultiplayerEvents.ConnectionLost += OnConnectionLost;
+    }
 
-    internal static void OnConnectionLost(ConnectionLostEvent _)
+    internal static void OnConnectionLost()
     {
         var screen = (InfoDialogScreen) GameScreenManager.Instance.StartScreen(
             ScreenPrefabs.Instance.InfoDialogScreen.gameObject,
@@ -23,7 +24,7 @@ internal class UICalls
             _ => PauseScreen.Instance.OnQuitConfirm(false)
         );
     }
-
+    /*
     internal static void PlayerCursorPositionUpdatedEvent_Event(PlayerCursorPositionUpdatedEvent @event)
     {
         if (@event.Player != MultiplayerManager.Instance.MultiGame.Players.Current)
@@ -33,4 +34,5 @@ internal class UICalls
             MultiplayerManager.Instance.NetClient.Send(new UpdatePlayerCursorPositionCommand(@event.Player.Id, @event.EventArgs));
         });
     }
+    */
 }

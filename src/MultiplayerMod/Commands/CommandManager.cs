@@ -1,26 +1,27 @@
 using HarmonyLib;
+using MultiplayerMod.Commands.NetCommands;
 using MultiplayerMod.Extensions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace MultiplayerMod.Events;
+namespace MultiplayerMod.Commands;
 
 /// <summary>
 /// Managing custom event system
 /// </summary>
-public static class EventManager
+public static class CommandManager
 {
     private static readonly Dictionary<Type, HashSet<Delegate>> _events = [];
-    private static List<Type> BaseEventDeclaredTypes = [];
+    private static readonly List<Type> BaseEventDeclaredTypes = [];
     private static readonly object Lock = new();
 
     /// <summary>
-    /// Load assembly and add <see cref="BaseEvent"/> types into <see cref="BaseEventDeclaredTypes"/>
+    /// Load assembly and add <see cref="BaseCommandEvent"/> types into <see cref="BaseEventDeclaredTypes"/>
     /// </summary>
     /// <param name="assembly"></param>
     public static void LoadMain(Assembly assembly)
     {
-        foreach (var type in assembly.GetTypes().Where(x => x.IsSubclassOf(typeof(BaseEvent)) && !x.IsAbstract))
+        foreach (var type in assembly.GetTypes().Where(x => x.IsSubclassOf(typeof(BaseCommandEvent)) && !x.IsAbstract))
         {
             Debug.Log($"Loading type from Assembly: {type.FullName}");
             BaseEventDeclaredTypes.Add(type);
@@ -67,7 +68,7 @@ public static class EventManager
     /// <typeparam name="TEvent"></typeparam>
     /// <param name="e"></param>
     /// <param name="memberName"></param>
-    public static void TriggerEvent<TEvent>(TEvent e, [CallerMemberName] string memberName = "") where TEvent : BaseEvent
+    public static void TriggerEvent<TEvent>(TEvent e, [CallerMemberName] string memberName = "") where TEvent : BaseCommandEvent
     {
         Type etype = e.GetType();
         Debug.Log($"TriggerEvent: {etype.Name} {memberName}");
@@ -98,7 +99,7 @@ public static class EventManager
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="delegate"></param>
-    public static void SubscribeEvent<T>(Action<T> @delegate) where T : BaseEvent
+    public static void SubscribeEvent<T>(Action<T> @delegate) where T : BaseCommandEvent
     {
         Debug.Log($"SubscribeEvent Action: {typeof(T).FullName} | {@delegate.Method.FullDescription()}");
         lock (Lock)
@@ -134,7 +135,7 @@ public static class EventManager
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="delegate"></param>
-    public static void UnsubscribeEvent<T>(Action<T> @delegate) where T : BaseEvent
+    public static void UnsubscribeEvent<T>(Action<T> @delegate) where T : BaseCommandEvent
     {
         Debug.Log($"UnsubscribeEvent Action: {typeof(T).FullName} | {@delegate.Method.FullDescription()}");
         lock (Lock)

@@ -1,6 +1,4 @@
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
-using MultiplayerMod.Events.Others;
+using MultiplayerMod.Events.Handlers;
 using Steamworks;
 using UnityEngine;
 
@@ -19,13 +17,13 @@ public class SteamLobbyJoinRequestComponent : MonoBehaviour
     public SteamLobbyJoinRequestComponent()
     {
         lobbyJoinRequestedCallback = Callback<GameLobbyJoinRequested_t>.Create(OnLobbyJoinRequested);
-        EventManager.SubscribeEvent<MainMenuInitialized>(OnMainMenuInitialized);
+        MainMenuEvents.MainMenuInitialized += OnMainMenuInitialized;
     }
 
-    [UnsubAfterCall]
-    private void OnMainMenuInitialized(MainMenuInitialized main)
+    private void OnMainMenuInitialized()
     {
         ProcessCommandLine();
+        MainMenuEvents.MainMenuInitialized -= OnMainMenuInitialized;
     }
 
     private void ProcessCommandLine()
@@ -58,7 +56,7 @@ public class SteamLobbyJoinRequestComponent : MonoBehaviour
         {
             var serverName = SteamMatchmaking.GetLobbyData(lobbyId, "server.name");
             dataUpdateCallback[0].Unregister();
-            EventManager.TriggerEvent(new MultiplayerJoinRequestedEvent(endpoint, serverName));
+            MultiplayerEvents.OnJoinRequested(endpoint, serverName);
         });
         SteamMatchmaking.RequestLobbyData(lobbyId);
     }

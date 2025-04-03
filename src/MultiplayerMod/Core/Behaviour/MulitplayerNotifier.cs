@@ -1,5 +1,6 @@
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Commands;
+using MultiplayerMod.Events.Arguments.CorePlayerArgs;
+using MultiplayerMod.Events.Handlers;
 using UnityEngine;
 
 namespace MultiplayerMod.Core.Behaviour;
@@ -15,7 +16,7 @@ public class MulitplayerNotifier : MonoBehaviour
 
     internal void Awake()
     {
-        EventManager.SubscribeEvent<PlayerLeftEvent>(OnPlayerLeft);
+        PlayerEvents.PlayerLeft += OnPlayerLeft;
         NotificationManager.Instance.notificationRemoved += OnNotificationRemoved;
     }
 
@@ -23,12 +24,12 @@ public class MulitplayerNotifier : MonoBehaviour
     {
         if (NotificationManager.Instance != null)
             NotificationManager.Instance.notificationRemoved -= OnNotificationRemoved;
-        EventManager.UnsubscribeEvent<PlayerLeftEvent>(OnPlayerLeft);
+        PlayerEvents.PlayerLeft -= OnPlayerLeft;
     }
 
-    private void OnPlayerLeft(PlayerLeftEvent @event)
+    private void OnPlayerLeft(CorePlayerLeftArg @event)
     {
-        var playerName = @event.Player.Profile.PlayerName;
+        var playerName = @event.CorePlayer.Profile.PlayerName;
         var message = $"{playerName} left";
         var description = $"{playerName} {(@event.IsForced ? "left" : "disconnected")}";
         AddNotification(message, description, NotificationType.BadMinor);

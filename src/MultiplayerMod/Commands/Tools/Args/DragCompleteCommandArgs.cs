@@ -11,7 +11,7 @@ namespace MultiplayerMod.Commands.Tools.Args;
 /// <param name="priority"></param>
 /// <param name="parameters"></param>
 [Serializable]
-public class DragCompleteEventArgs(
+public class DragCompleteCommandArgs(
     List<int> cells,
     Vector3 cursorDown,
     Vector3 cursorUp,

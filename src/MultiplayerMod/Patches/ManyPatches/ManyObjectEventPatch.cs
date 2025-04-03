@@ -1,8 +1,5 @@
 using HarmonyLib;
 using MultiplayerMod.Core.Execution;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.EventArgs;
-using MultiplayerMod.Events.Others;
 using System.Reflection;
 
 namespace MultiplayerMod.Patches.ManyPatches;
@@ -135,10 +132,12 @@ internal static class ManyObjectEventPatch
             switch (__instance)
             {
                 case KMonoBehaviour kMonoBehaviour:
-                    EventManager.TriggerEvent<ComponentMethodCalled>(new(new ComponentEventsArgs(kMonoBehaviour, __originalMethod, __args)));
+                    Debug.Log("ComponentEventsArgs");
+                    //EventManager.TriggerEvent<ComponentMethodCalled>(new(new ComponentEventsArgs(kMonoBehaviour, __originalMethod, __args)));
                     return;
                 case StateMachine.Instance stateMachine:
-                    EventManager.TriggerEvent<StateMachineMethodCalled>(new(new StateMachineEventsArgs(stateMachine, __originalMethod, __args)));
+                    Debug.Log("StateMachineEventsArgs");
+                    //EventManager.TriggerEvent<StateMachineMethodCalled>(new(new StateMachineEventsArgs(stateMachine, __originalMethod, __args)));
                     return;
                 default:
                     throw new NotSupportedException($"{__instance} has un supported type");

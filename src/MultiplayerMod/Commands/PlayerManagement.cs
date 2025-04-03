@@ -1,9 +1,7 @@
 using MultiplayerMod.Commands.NetCommands;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Player;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
-using MultiplayerMod.Events.Others;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Multiplayer.UI.Overlays;
 
 namespace MultiplayerMod.Commands;
@@ -14,9 +12,9 @@ internal class PlayerManagement
     {
         var player = MultiplayerManager.Instance.MultiGame.Players[changePlayerStateCommand.PlayerId];
         player.State = changePlayerStateCommand.State;
-        EventManager.TriggerEvent(new PlayerStateChangedEvent(player, changePlayerStateCommand.State));
+        PlayerEvents.OnPlayerStateChanged(player, changePlayerStateCommand.State);
         if (MultiplayerManager.Instance.MultiGame.Players.Ready)
-            EventManager.TriggerEvent(new PlayersReadyEvent());
+            MultiplayerEvents.OnPlayersReady();
     }
 
     internal static void NotifyWorldSavePreparing_Event(NotifyWorldSavePreparingCommand _)
@@ -32,14 +30,14 @@ internal class PlayerManagement
     internal static void SyncPlayersCommand_Event(SyncPlayersCommand syncPlayers)
     {
         MultiplayerManager.Instance.MultiGame.Players.Synchronize(syncPlayers.Players);
-        EventManager.TriggerEvent(new PlayersUpdatedEvent(MultiplayerManager.Instance.MultiGame.Players));
+        PlayerEvents.OnPlayersUpdated(MultiplayerManager.Instance.MultiGame.Players);
     }
 
     internal static void RemovePlayerCommand_Event(RemovePlayerCommand playerCommand)
     {
         var player = MultiplayerManager.Instance.MultiGame.Players[playerCommand.PlayerId];
         MultiplayerManager.Instance.MultiGame.Players.Remove(playerCommand.PlayerId);
-        EventManager.TriggerEvent(new PlayerLeftEvent(player, player.State == PlayerState.Leaving));
+        PlayerEvents.OnPlayerLeft(player, player.State == PlayerState.Leaving);
     }
 
     internal static void RequestPlayerStateChangeCommand_Event(RequestPlayerStateChangeCommand playerCommand)
@@ -49,7 +47,7 @@ internal class PlayerManagement
 
     internal static void RequestWorldSyncCommand_Event(RequestWorldSyncCommand _)
     {
-        EventManager.TriggerEvent(new WorldSyncRequestedEvent());
+        WorldEvents.OnWorldSyncRequested();
     }
 
     internal static void InitializeClientCommand_Event(InitializeClientCommand initializeClient)
@@ -59,8 +57,7 @@ internal class PlayerManagement
             Debug.Log("Missing client id. Unable to initialize a player.");
             return;
         }
-        Debug.Log("InitializeClientCommand_Event Create ClientInitializationRequestEvent!!!");
-        EventManager.TriggerEvent(new ClientInitializationRequestEvent(initializeClient.ClientId, initializeClient.Profile));
+        MultiplayerEvents.OnClientInitializationRequest(initializeClient.ClientId, initializeClient.Profile);
     }
 
     internal static void AddPlayerCommand_Event(AddPlayerCommand addPlayerCommand)
@@ -69,8 +66,8 @@ internal class PlayerManagement
         if (addPlayerCommand.Current)
         {
             MultiplayerManager.Instance.MultiGame.Players.SetCurrentPlayerId(addPlayerCommand.Player.Id);
-            EventManager.TriggerEvent(new CurrentPlayerInitializedEvent(addPlayerCommand.Player));
+            PlayerEvents.OnCurrentPlayerInitialized(addPlayerCommand.Player);
         }
-        EventManager.TriggerEvent(new PlayerJoinedEvent(addPlayerCommand.Player));
+        PlayerEvents.OnPlayerJoined(addPlayerCommand.Player);
     }
 }

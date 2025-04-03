@@ -1,9 +1,7 @@
 using HarmonyLib;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Player;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
-using MultiplayerMod.Events.MainMenu;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Extensions;
 
 namespace MultiplayerMod.Patches.ScreenPatches;
@@ -49,20 +47,20 @@ internal static class MainMenuPatch
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(MainMenu.OnSpawn))]
-    internal static void OnSpawn() => EventManager.TriggerEvent(new MainMenuInitialized());
+    internal static void OnSpawn() => MainMenuEvents.OnMainMenuInitialized();
 
     internal static bool Is(this MainMenu.ButtonInfo info, LocString loc) => info.text.key.String == loc.key.String;
 
     internal static void DisableMultiplayer(System.Action action = null)
     {
-        EventManager.TriggerEvent(new SinglePlayerModeSelectedEvent());
+        MainMenuEvents.OnSinglePlayerModeSelected();
         action?.Invoke();
     }
 
     internal static void UseMultiplayerMode(PlayerRole mode, System.Action action)
     {
         MultiplayerManager.Instance.MultiGame.Refresh(mode);
-        EventManager.TriggerEvent(new MultiplayerModeSelectedEvent(mode));
+        MainMenuEvents.OnMultiplayerModeSelected(mode);
         action();
     }
 }

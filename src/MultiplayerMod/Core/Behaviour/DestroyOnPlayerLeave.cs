@@ -1,6 +1,6 @@
 using MultiplayerMod.Core.Player;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Arguments.CorePlayerArgs;
+using MultiplayerMod.Events.Handlers;
 
 namespace MultiplayerMod.Core.Behaviour;
 
@@ -17,16 +17,16 @@ public class DestroyOnPlayerLeave : KMonoBehaviour
     public override void OnSpawn()
     {
         var player = playerComponent.Player;
-        EventManager.SubscribeEvent<PlayerLeftEvent>(OnLeave);
+        PlayerEvents.PlayerLeft += OnLeave;
     }
 
-    private void OnLeave(PlayerLeftEvent @event)
+    private void OnLeave(CorePlayerLeftArg @event)
     {
         var player = playerComponent.Player;
-        if (@event.Player == player)
+        if (@event.CorePlayer == player)
             DestroyImmediate(gameObject);
     }
 
     /// <inheritdoc/>
-    public override void OnForcedCleanUp() => EventManager.UnsubscribeEvent<PlayerLeftEvent>(OnLeave);
+    public override void OnForcedCleanUp() => PlayerEvents.PlayerLeft -= OnLeave;
 }

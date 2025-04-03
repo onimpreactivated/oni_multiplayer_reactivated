@@ -1,17 +1,19 @@
 using MultiplayerMod.Commands.NetCommands;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Player;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Network.Common;
 
 namespace MultiplayerMod.Multiplayer.EventCalls;
 
-internal class MPClientCalls
+internal class MPClientCalls : BaseEventCall
 {
-    public static void Registers()
+    public override void Init()
     {
         MultiplayerManager.Instance.NetClient.StateChanged += OnClientStateChanged;
+        MultiplayerEvents.MultiplayerStarted += StartClientWhenReady;
+        MultiplayerEvents.MultiplayerStop += OnStopMultiplayer;
+        GameEvents.GameQuit += OnGameQuit;
     }
 
     internal static void OnClientStateChanged(NetStateClient state)
@@ -24,12 +26,12 @@ internal class MPClientCalls
         }
         if (state == NetStateClient.Error)
         {
-            EventManager.TriggerEvent(new StopMultiplayerEvent());
-            EventManager.TriggerEvent(new ConnectionLostEvent());
+            MultiplayerEvents.OnMultiplayerStop();
+            MultiplayerEvents.OnConnectionLost();
         }
     }
 
-    internal static void StartClientWhenReady(GameStartedEvent _)
+    internal static void StartClientWhenReady()
     {
         if (MultiplayerManager.Instance.MultiGame.Mode != PlayerRole.Client)
             return;
@@ -38,13 +40,13 @@ internal class MPClientCalls
         MultiplayerManager.Instance.NetClient.Send(new RequestPlayerStateChangeCommand(currentPlayer.Id, PlayerState.Ready), MultiplayerCommandOptions.OnlyHost);
     }
 
-    internal static void OnGameQuit(GameQuitEvent _)
+    internal static void OnGameQuit()
     {
         MultiplayerManager.Instance.NetClient.Send(new RequestPlayerStateChangeCommand(MultiplayerManager.Instance.MultiGame.Players.Current.Id, PlayerState.Leaving), MultiplayerCommandOptions.OnlyHost);
-        EventManager.TriggerEvent(new StopMultiplayerEvent());
+        MultiplayerEvents.OnMultiplayerStop();
     }
 
-    internal static void OnStopMultiplayer(StopMultiplayerEvent _)
+    internal static void OnStopMultiplayer()
     {
         MultiplayerManager.Instance.NetClient.Disconnect();
         MultiplayerManager.Instance.MultiGame.Players.Synchronize([]);

@@ -1,9 +1,8 @@
+using MultiplayerMod.Commands;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Objects;
 using MultiplayerMod.Core.Objects.Resolvers;
 using MultiplayerMod.Core.Wrappers;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Chores;
 using MultiplayerMod.Extensions;
 using MultiplayerMod.Multiplayer.Controllers;
 using MultiplayerMod.Multiplayer.Datas.World;
@@ -11,6 +10,7 @@ using MultiplayerMod.Multiplayer.Interfaces;
 
 namespace MultiplayerMod.Multiplayer.Managers;
 
+/*
 /// <summary>
 /// Sync Chore between clients
 /// </summary>
@@ -23,8 +23,8 @@ public class ChoreWorldStateManager : IWorldStateManager
     /// </summary>
     public ChoreWorldStateManager()
     {
-        EventManager.SubscribeEvent<ChoreCreatedEvent>(ChoreCreatedEvent_Call);
-        EventManager.SubscribeEvent<ChoreCleanupEvent>(ChoreCleanupEvent_Call);
+        CommandManager.SubscribeEvent<ChoreCreatedEvent>(ChoreCreatedEvent_Call);
+        CommandManager.SubscribeEvent<ChoreCleanupEvent>(ChoreCleanupEvent_Call);
     }
 
     /// <inheritdoc/>
@@ -131,3 +131,4 @@ public class ChoreWorldStateManager : IWorldStateManager
         public ChoreResolver Chore;
     }
 }
+*/

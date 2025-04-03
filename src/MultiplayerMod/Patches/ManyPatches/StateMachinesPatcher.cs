@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace MultiplayerMod.Patches.ManyPatches;
 
-[HarmonyPatch]
+//[HarmonyPatch]
 internal static class StateMachinesPatcher
 {
     internal static IEnumerable<MethodBase> TargetMethods()

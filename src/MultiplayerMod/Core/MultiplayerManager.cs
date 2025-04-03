@@ -1,7 +1,6 @@
 using HarmonyLib;
 using MultiplayerMod.Core.Objects;
 using MultiplayerMod.Core.Player;
-using MultiplayerMod.Multiplayer.Controllers;
 using MultiplayerMod.Multiplayer.EventCalls;
 using MultiplayerMod.Multiplayer.Managers;
 using MultiplayerMod.Network.Common;
@@ -19,6 +18,8 @@ public class MultiplayerManager
     /// Instance of <see cref="MultiplayerManager"/>
     /// </summary>
     public static MultiplayerManager Instance { get; private set; } = new();
+
+    internal static List<BaseEventCall> Calls = [];
 
     /// <summary>
     /// Checks if can run multiplayer code.
@@ -65,9 +66,22 @@ public class MultiplayerManager
     {
         Debug.Log("InitMultiplayerLogics");
         WorldManager = new([/*new ChoreWorldStateManager()*/]);
-        MPCommandController.Registers();
-        MPClientCalls.Registers();
-        MPServerCalls.Registers();
+        Calls.AddRange([
+            new DragCompleteCalls(), 
+            new ExecutionCalls(),
+            new MPBothCalls(),
+            new MPClientCalls(),
+            new MPCommandCalls(),
+            new MPCommonCalls(),
+            new MPServerCalls(),
+            new SpeedCalls(),
+            new UICalls(),
+            new WorldCalls(),
+        ]);
+        foreach (var call in Calls)
+        {
+            call.Init();
+        }
     }
 
     /// <summary>

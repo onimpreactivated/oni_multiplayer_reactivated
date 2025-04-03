@@ -6,7 +6,7 @@ using MultiplayerMod.Extensions;
 
 namespace MultiplayerMod.Patches;
 
-[HarmonyPatch(typeof(ConsumableConsumer))]
+//[HarmonyPatch(typeof(ConsumableConsumer))]
 internal static class ConsumableConsumerPatch
 {
     internal static bool IsCommandSent = false;

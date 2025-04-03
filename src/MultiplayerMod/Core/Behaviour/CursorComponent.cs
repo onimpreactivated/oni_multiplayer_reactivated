@@ -1,5 +1,3 @@
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Others;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -45,7 +43,7 @@ public class CursorComponent : KMonoBehaviour
         playerName = assignedPlayer.Player.Profile.PlayerName;
         canvas.overrideSorting = true;
         canvas.sortingOrder = 100;
-        EventManager.SubscribeEvent<PlayerCursorPositionUpdatedEvent>(OnPlayerCursorPositionUpdated);
+        //CommandManager.SubscribeEvent<PlayerCursorPositionUpdatedEvent>(OnPlayerCursorPositionUpdated);
     }
 
     private Image CreateCursorImage(GameObject parent, Texture2D cursorTexture)
@@ -79,9 +77,9 @@ public class CursorComponent : KMonoBehaviour
         textComponent.enableWordWrapping = false;
         return textComponent;
     }
-
+    /*
     /// <inheritdoc/>
-    public override void OnForcedCleanUp() => EventManager.UnsubscribeEvent<PlayerCursorPositionUpdatedEvent>(OnPlayerCursorPositionUpdated);
+    public override void OnForcedCleanUp() => CommandManager.UnsubscribeEvent<PlayerCursorPositionUpdatedEvent>(OnPlayerCursorPositionUpdated);
 
     private void OnPlayerCursorPositionUpdated(PlayerCursorPositionUpdatedEvent @event)
     {
@@ -95,6 +93,7 @@ public class CursorComponent : KMonoBehaviour
         worldCursor.Trace(args.Position);
         screenCursor.Trace(args.PositionWithinScreen);
     }
+    */
 
     internal void Update()
     {

@@ -1,8 +1,8 @@
 ﻿using MultiplayerMod.Events.Arguments.Common;
 
-namespace MultiplayerMod.Events;
+namespace MultiplayerMod.Events.Handlers;
 
-public static class SpeedControl
+public static class SpeedControlEvents
 {
     public static event OniEventHandlerTEventArgs<IntArg> SpeedControlSetSpeed;
     public static event OniEventHandler SpeedControlPause;

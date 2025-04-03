@@ -1,8 +1,8 @@
 using MultiplayerMod.Commands.NetCommands;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Player;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Arguments.CorePlayerArgs;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Extensions;
 using MultiplayerMod.Multiplayer.Datas.World;
 using MultiplayerMod.Multiplayer.EventCalls;
@@ -34,7 +34,7 @@ public class WorldManager(List<IWorldStateManager> stateManagers)
         var resume = !SpeedControlScreen.Instance.IsPaused;
         MultiplayerManager.Instance.NetServer.Send(new PauseGameCommand());
 
-        EventManager.TriggerEvent(new WorldSyncEvent());
+        WorldEvents.OnWorldSync();
 
         MultiplayerManager.Instance.MultiGame.Players.ForEach(it => MultiplayerManager.Instance.NetServer.Send(new ChangePlayerStateCommand(it.Id, PlayerState.Loading)));
         MultiplayerManager.Instance.NetServer.Send(new ChangePlayerStateCommand(MultiplayerManager.Instance.MultiGame.Players.Current.Id, PlayerState.Ready));
@@ -43,13 +43,14 @@ public class WorldManager(List<IWorldStateManager> stateManagers)
         var world = new WorldSave(WorldName, GetWorldSave(), new WorldState());
         worldStateManagers.ForEach(it => it.SaveState(world.State));
         MultiplayerManager.Instance.NetServer.Send(new LoadWorldCommand(world), MultiplayerCommandOptions.SkipHost);
-        EventManager.SubscribeEvent<PlayersReadyEvent>(MPServerCalls.ResumeGameOnReady);
+
+        MultiplayerEvents.PlayersReady += MPServerCalls.ResumeGameOnReady;
     }
 
     private void SetupStatusOverlay()
     {
         MultiplayerStatusOverlay.Show("Waiting for players...");
-        EventManager.SubscribeEvent<PlayerStateChangedEvent>(WaitPlayers);
+        PlayerEvents.PlayerStateChanged += WaitPlayers;
     }
 
     /// <summary>
@@ -59,11 +60,11 @@ public class WorldManager(List<IWorldStateManager> stateManagers)
     public void RequestWorldLoad(WorldSave world)
     {
         MultiplayerStatusOverlay.Show($"Loading {world.Name}...");
-        EventManager.SubscribeEvent<PlayersReadyEvent>(MPCommonEvents.CloseOverlayOnReady);
-        EventManager.SubscribeEvent<WorldStateInitializingEvent>([UnsubAfterCall] (_) =>
+        MultiplayerEvents.PlayersReady += MPServerCalls.ResumeGameOnReady;
+        WorldEvents.WorldStateInitializing += () =>
         {
             worldStateManagers.ForEach(it => it.LoadState(world.State));
-        });
+        };
         LoadWorldSave(world.Name, world.Data);
     }
 
@@ -83,15 +84,15 @@ public class WorldManager(List<IWorldStateManager> stateManagers)
     /// State changing that waits until all player ready then close Overlay
     /// </summary>
     /// <param name="event"></param>
-    public void WaitPlayers(PlayerStateChangedEvent @event)
+    public void WaitPlayers(CorePlayerStateChanged @event)
     {
-        Debug.Log($"Player change: {@event.Player.Id} {@event.State}");
+        Debug.Log($"Player change: {@event.CorePlayer.Id} {@event.State}");
         var players = MultiplayerManager.Instance.MultiGame.Players;
         Debug.Log($"Players Ready: {players.Ready}");
         if (players.Ready)
         {
             MultiplayerStatusOverlay.Close();
-            EventManager.UnsubscribeEvent<PlayerStateChangedEvent>(WaitPlayers);
+            PlayerEvents.PlayerStateChanged -= WaitPlayers;
         }
         var readyPlayersCount = players.Count(it => it.State == PlayerState.Ready);
         var playerList = string.Join("\n", players.Select(it => $"{it.Profile.PlayerName}: {it.State}"));

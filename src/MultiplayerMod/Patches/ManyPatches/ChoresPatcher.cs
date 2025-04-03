@@ -2,15 +2,13 @@ using EIV_Common.Coroutines;
 using HarmonyLib;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Execution;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Chores;
 using MultiplayerMod.Extensions;
 using MultiplayerMod.Multiplayer.Controllers;
 using System.Reflection.Emit;
 
 namespace MultiplayerMod.Patches.ManyPatches;
 
-[HarmonyPatch]
+//[HarmonyPatch]
 internal static class ChoresPatcher
 {
     [HarmonyPostfix]
@@ -34,7 +32,7 @@ internal static class ChoresPatcher
         var wasValid = __instance.IsValid_Ext();
         bool Had = MultiplayerManager.Instance.MultiGame.Objects.RemoveObject(__instance);
         Debug.Log($"ChoreCleanup: Clear Chore: {__instance}, WasValid: {wasValid}, Had: {Had}");
-        EventManager.TriggerEvent(new ChoreCleanupEvent(__instance));
+        //EventManager.TriggerEvent(new ChoreCleanupEvent(__instance));
     }
     
 
@@ -45,7 +43,7 @@ internal static class ChoresPatcher
         var contextField = AccessTools.Field(typeof(ChoreDriver), nameof(ChoreDriver.context));
         var beforeChoreSetMethod = AccessTools.Method(typeof(ChoresPatcher), nameof(BeforeChoreSetCall));
 
-        List<CodeInstruction> newInstructions = instructions.ToList();
+        List<CodeInstruction> newInstructions = [.. instructions];
 
         int index = newInstructions.FindIndex(x => x.opcode == OpCodes.Stfld);
         newInstructions.InsertRange(index,
@@ -79,8 +77,7 @@ internal static class ChoresPatcher
             try
             {
                 Debug.Log($"Create Wait Chore! {context.chore.GetType()}");
-                StandardChoreBase scb = context.chore as StandardChoreBase;
-                if (scb == null)
+                if (context.chore is not StandardChoreBase scb)
                 {
                     Debug.Log($"Create Wait Chore! scb is null!! {context.chore.GetType()}");
                     return true;
@@ -100,7 +97,7 @@ internal static class ChoresPatcher
             yield break;
         }
         Debug.Log($"BeforeChoreSetCall: Driver: {driver} Prev Chore: {previousChore} contect chore: {context.chore}");
-        EventManager.TriggerEvent(new BeforeChoreSetEvent(driver, previousChore, ref context));
+        //EventManager.TriggerEvent(new BeforeChoreSetEvent(driver, previousChore, ref context));
         yield break;
     }
 }

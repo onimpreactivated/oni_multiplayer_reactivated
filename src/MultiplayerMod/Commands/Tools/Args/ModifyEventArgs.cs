@@ -10,14 +10,14 @@ namespace MultiplayerMod.Commands.Tools.Args;
 /// <param name="toolContext"></param>
 [Serializable]
 public class ModifyEventArgs(
-    DragCompleteEventArgs dragEventArgs,
+    DragCompleteCommandArgs dragEventArgs,
     DebugTool.Type type,
     DebugToolContext toolContext)
 {
     /// <summary>
     /// Argument for <see cref="DragTool"/>
     /// </summary>
-    public DragCompleteEventArgs DragEventArgs => dragEventArgs;
+    public DragCompleteCommandArgs DragEventArgs => dragEventArgs;
 
     /// <summary>
     /// The <see cref="DebugTool.Type"/>

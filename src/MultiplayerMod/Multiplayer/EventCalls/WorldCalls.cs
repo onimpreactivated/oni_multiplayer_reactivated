@@ -1,16 +1,16 @@
 using MultiplayerMod.Core;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Handlers;
 
 namespace MultiplayerMod.Multiplayer.EventCalls;
 
-internal class WorldCalls
+internal class WorldCalls : BaseEventCall
 {
-    internal static void WorldSyncRequestedEvent_Event(WorldSyncRequestedEvent _)
+    public override void Init()
     {
-        MultiplayerManager.Instance.WorldManager.Sync();
+        WorldEvents.WorldSyncRequested += WorldSyncRequestedEvent_Event;
+        WorldEvents.WorldSaved += WorldSyncRequestedEvent_Event;
     }
-
-    internal static void WorldSyncRequestedEvent_Event(WorldSavedEvent _)
+    internal static void WorldSyncRequestedEvent_Event()
     {
         MultiplayerManager.Instance.WorldManager.Sync();
     }

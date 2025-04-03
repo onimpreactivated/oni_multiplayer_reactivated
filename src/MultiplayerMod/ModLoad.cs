@@ -1,8 +1,8 @@
 using EIV_Common.Coroutines;
 using HarmonyLib;
 using KMod;
+using MultiplayerMod.Commands;
 using MultiplayerMod.Core;
-using MultiplayerMod.Events;
 using System.Reflection;
 
 namespace MultiplayerMod;
@@ -27,7 +27,7 @@ public class ModLoad : UserMod2
             Debug.Log("Patched: " + item.FullDescription());
         }
         CoroutineWorkerCustom.Instance.Start();
-        EventManager.LoadMain(assembly);
+        CommandManager.LoadMain(assembly);
         MultiplayerManager.Instance.Init(harmony);
     }
 }

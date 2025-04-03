@@ -1,6 +1,6 @@
 using MultiplayerMod.Core.Objects.Resolvers;
 using MultiplayerMod.Core.Wrappers;
-using MultiplayerMod.Events.EventArgs;
+using MultiplayerMod.Events.Arguments;
 using MultiplayerMod.Extensions;
 
 namespace MultiplayerMod.Commands.NetCommands;

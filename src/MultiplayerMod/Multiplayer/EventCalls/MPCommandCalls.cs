@@ -1,19 +1,19 @@
+using MultiplayerMod.Commands;
 using MultiplayerMod.Commands.NetCommands;
 using MultiplayerMod.Core;
-using MultiplayerMod.Events;
 using MultiplayerMod.Network.Common.Interfaces;
 
-namespace MultiplayerMod.Multiplayer.Controllers;
+namespace MultiplayerMod.Multiplayer.EventCalls;
 
 /// <summary>
 /// Server and Client Command receive hooks
 /// </summary>
-public class MPCommandController
+internal class MPCommandCalls : BaseEventCall
 {
     /// <summary>
     /// Register event callers <see cref="INetServer.CommandReceived"/> and <see cref="INetClient.CommandReceived"/>
     /// </summary>
-    public static void Registers()
+    public override void Init()
     {
         MultiplayerManager.Instance.NetServer.CommandReceived += OnServerReceivedCommand;
 
@@ -26,13 +26,13 @@ public class MPCommandController
     private static void OnClientReceivedCommand(BaseCommandEvent command)
     {
         Debug.Log("OnClientReceivedCommand Received command: " + command);
-        EventManager.TriggerEvent(command);
+        CommandManager.TriggerEvent(command);
     }
 
     private static void OnServerReceivedCommand(INetId clientId, BaseCommandEvent command)
     {
         Debug.Log("OnServerReceivedCommand Received command: " + command);
         command.ClientId = clientId;
-        EventManager.TriggerEvent(command);
+        CommandManager.TriggerEvent(command);
     }
 }

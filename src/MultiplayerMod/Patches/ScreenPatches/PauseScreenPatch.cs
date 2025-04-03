@@ -1,8 +1,7 @@
 using HarmonyLib;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Execution;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Handlers;
 
 namespace MultiplayerMod.Patches.ScreenPatches;
 
@@ -17,6 +16,6 @@ internal static class PauseScreenPatch
             return;
         if (!MultiplayerManager.IsMultiplayer())
             return;
-        EventManager.TriggerEvent(new GameQuitEvent());
+        GameEvents.OnGameQuit();
     }
 }

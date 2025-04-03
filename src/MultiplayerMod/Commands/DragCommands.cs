@@ -55,61 +55,61 @@ internal static class DragCommands
         }
 
     }
-    internal static void DragToolCommand_Cancel(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Cancel(DragCompleteCommandArgs args)
     {
         var tool = new CancelTool();
         RunBasicCommandForTool(tool, args, () => { args.Cells.ForEach(it => tool.OnDragTool(it, 0)); });
     }
 
-    internal static void DragToolCommand_Destruction(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Destruction(DragCompleteCommandArgs args)
     {
         var tool = new DeconstructTool();
         RunBasicCommandForTool(tool, args, () => { args.Cells.ForEach(it => tool.OnDragTool(it, 0)); });
     }
 
-    internal static void DragToolCommand_Dig(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Dig(DragCompleteCommandArgs args)
     {
         var tool = new DigTool();
         RunBasicCommandForTool(tool, args, () => { args.Cells.ForEach(it => tool.OnDragTool(it, 0)); });
     }
 
-    internal static void DragToolCommand_Disinfect(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Disinfect(DragCompleteCommandArgs args)
     {
         var tool = new DisinfectTool();
         RunBasicCommandForTool(tool, args, () => { args.Cells.ForEach(it => tool.OnDragTool(it, 0)); });
     }
 
-    internal static void DragToolCommand_EmptyPipe(DragCompleteEventArgs args)
+    internal static void DragToolCommand_EmptyPipe(DragCompleteCommandArgs args)
     {
         var tool = new EmptyPipeTool();
         RunBasicCommandForTool(tool, args, () => { args.Cells.ForEach(it => tool.OnDragTool(it, 0)); });
     }
 
-    internal static void DragToolCommand_Clear(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Clear(DragCompleteCommandArgs args)
     {
         var tool = new ClearTool();
         RunBasicCommandForTool(tool, args, () => { args.Cells.ForEach(it => tool.OnDragTool(it, 0)); });
     }
 
-    internal static void DragToolCommand_Attack(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Attack(DragCompleteCommandArgs args)
     {
         var tool = new AttackTool();
         RunBasicCommandForTool(tool, args, () => { tool.OnDragComplete(args.CursorDown, args.CursorUp); });
     }
 
-    internal static void DragToolCommand_Disconnect(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Disconnect(DragCompleteCommandArgs args)
     {
         var tool = new DisconnectTool();
         RunBasicCommandForTool(tool, args, () => { tool.OnDragComplete(args.CursorDown, args.CursorUp); });
     }
 
-    internal static void DragToolCommand_Capture(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Capture(DragCompleteCommandArgs args)
     {
         var tool = new CaptureTool();
         RunBasicCommandForTool(tool, args, () => { tool.OnDragComplete(args.CursorDown, args.CursorUp); });
     }
 
-    internal static void DragToolCommand_Harvest(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Harvest(DragCompleteCommandArgs args)
     {
         var tool = new HarvestTool();
         tool.downPos = args.CursorDown;
@@ -123,7 +123,7 @@ internal static class DragCommands
         ContextRunner.Override(new PrioritySettingsContext(args.Priority), () => { tool.OnDragComplete(args.CursorDown, args.CursorUp); });
     }
 
-    internal static void DragToolCommand_Mop(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Mop(DragCompleteCommandArgs args)
     {
         var tool = new MopTool();
         tool.downPos = args.CursorDown;
@@ -131,7 +131,7 @@ internal static class DragCommands
         ContextRunner.Override(new PrioritySettingsContext(args.Priority), () => { tool.OnDragComplete(args.CursorDown, args.CursorUp); });
     }
 
-    internal static void DragToolCommand_Prioritize(DragCompleteEventArgs args)
+    internal static void DragToolCommand_Prioritize(DragCompleteCommandArgs args)
     {
         var tool = new PrioritizeTool();
         tool.downPos = args.CursorDown;
@@ -148,7 +148,7 @@ internal static class DragCommands
     }
 
     [NoAutoSubscribe]
-    internal static void RunBasicCommandForTool<T>(T tool, DragCompleteEventArgs args, System.Action invokeAction) where T : DragTool, new()
+    internal static void RunBasicCommandForTool<T>(T tool, DragCompleteCommandArgs args, System.Action invokeAction) where T : DragTool, new()
     {
         tool.downPos = args.CursorDown;
 

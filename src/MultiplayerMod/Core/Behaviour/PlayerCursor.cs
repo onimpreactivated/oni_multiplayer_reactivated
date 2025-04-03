@@ -1,6 +1,6 @@
 using MultiplayerMod.Core.Player;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Arguments.CorePlayerArgs;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Extensions;
 using UnityEngine;
 
@@ -10,13 +10,13 @@ internal class PlayerCursor : KMonoBehaviour
 {
     public override void OnSpawn()
     {
-        EventManager.SubscribeEvent<PlayerJoinedEvent>(OnPlayerJoined);
+        PlayerEvents.PlayerJoined += OnPlayerJoined;
         MultiplayerManager.Instance.MultiGame.Players.ForEach(CreatePlayerCursor);
     }
 
-    private void OnPlayerJoined(PlayerJoinedEvent @event) => CreatePlayerCursor(@event.Player);
+    private void OnPlayerJoined(CorePlayerArg @event) => CreatePlayerCursor(@event.CorePlayer);
 
-    public override void OnForcedCleanUp() => EventManager.UnsubscribeEvent<PlayerJoinedEvent>(OnPlayerJoined);
+    public override void OnForcedCleanUp() => PlayerEvents.PlayerJoined -= OnPlayerJoined;
 
     private void CreatePlayerCursor(CorePlayer player)
     {

@@ -7,12 +7,12 @@ namespace MultiplayerMod.Commands.Tools;
 /// 
 /// </summary>
 [Serializable]
-public class DragToolCommand(DragCompleteEventArgs args, Type dragToolType) : BaseCommandEvent
+public class DragToolCommand(DragCompleteCommandArgs args, Type dragToolType) : BaseCommandEvent
 {
     /// <summary>
     /// Argument for <see cref="DragTool"/>
     /// </summary>
-    public DragCompleteEventArgs Args => args;
+    public DragCompleteCommandArgs Args => args;
 
     /// <summary>
     /// Type of this DragToolCommand

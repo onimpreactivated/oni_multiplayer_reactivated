@@ -8,7 +8,7 @@ namespace MultiplayerMod.Commands.NetCommands;
 /// Base event for handling Commands
 /// </summary>
 [Serializable]
-public abstract class BaseCommandEvent : BaseEvent
+public abstract class BaseCommandEvent
 {
     /// <summary>
     /// Identification for the Command
@@ -16,7 +16,7 @@ public abstract class BaseCommandEvent : BaseEvent
     public Guid Id { get; } = Guid.NewGuid();
 
     /// <summary>
-    /// 
+    /// Identification for the Client.
     /// </summary>
     public INetId ClientId { get; internal set; }
 

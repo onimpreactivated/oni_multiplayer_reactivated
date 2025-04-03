@@ -2,15 +2,13 @@ using EIV_Common.Coroutines;
 using HarmonyLib;
 using MultiplayerMod.Core.Execution;
 using MultiplayerMod.Core;
-using MultiplayerMod.Events.Chores;
-using MultiplayerMod.Events;
 using MultiplayerMod.Extensions;
 using System.Reflection;
 using MultiplayerMod.ChoreSync;
 
 namespace MultiplayerMod.Patches.ManyPatches;
 
-[HarmonyPatch]
+//[HarmonyPatch]
 internal static class ChoreCTorPatcher
 {
     internal static IEnumerable<MethodBase> TargetMethods()
@@ -78,7 +76,7 @@ internal static class ChoreCTorPatcher
         var id = chore.Register(persistent: seri == StateMachine.SerializeType.Never);
         Debug.Log($"Register Success! {id}, {chore.GetType()}");
         Debug.Log($"Register Success! {chore.IsValid_Ext()} | {chore.MultiplayerId()}");
-        EventManager.TriggerEvent(new ChoreCreatedEvent(chore, id, chore.GetType(), arguments));
+        //EventManager.TriggerEvent(new ChoreCreatedEvent(chore, id, chore.GetType(), arguments));
         yield break;
     }
 

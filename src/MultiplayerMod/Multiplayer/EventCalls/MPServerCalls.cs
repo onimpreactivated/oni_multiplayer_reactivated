@@ -2,9 +2,8 @@ using MultiplayerMod.Commands.NetCommands;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Exceptions;
 using MultiplayerMod.Core.Player;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
-using MultiplayerMod.Events.Others;
+using MultiplayerMod.Events.Arguments.MultiplayerArg;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Network.Common;
 using MultiplayerMod.Network.Common.Interfaces;
 
@@ -13,17 +12,18 @@ namespace MultiplayerMod.Multiplayer.EventCalls;
 /// <summary>
 /// Mulitplayer Server related Event calls
 /// </summary>
-public class MPServerCalls
+internal class MPServerCalls : BaseEventCall
 {
     internal static readonly Dictionary<INetId, Guid> identities = [];
 
     /// <summary>
     /// Registering <see cref="INetServer"/> Events
     /// </summary>
-    public static void Registers()
+    public override void Init()
     {
         MultiplayerManager.Instance.NetServer.ClientDisconnected += OnClientDisconnected;
         MultiplayerManager.Instance.NetServer.StateChanged += OnServerStateChanged;
+        MultiplayerEvents.ClientInitializationRequest += OnClientInitializationRequested;
     }
 
     internal static void OnServerStateChanged(NetStateServer state)
@@ -43,7 +43,7 @@ public class MPServerCalls
         Debug.Log($"Client {id} disconnected {{ Id = {player.Id} }}");
     }
 
-    internal static void OnClientInitializationRequested(ClientInitializationRequestEvent @event)
+    internal static void OnClientInitializationRequested(ClientInitializationRequestArg @event)
     {
         var host = @event.ClientId.Equals(MultiplayerManager.Instance.NetClient.Id);
         var role = host ? PlayerRole.Server : PlayerRole.Client;
@@ -58,8 +58,7 @@ public class MPServerCalls
         Debug.Log($"Client {@event.ClientId} initialized {{ Role = {role}, Id = {player.Id} }}");
     }
 
-    [UnsubAfterCall]
-    internal static void ResumeGameOnReady(PlayersReadyEvent _)
+    internal static void ResumeGameOnReady()
     {
         // we currently skip this one here.
         /*

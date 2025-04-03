@@ -35,6 +35,6 @@ public class MouseMovedEventArgs(Vector2 position, Vector2? positionWithinScreen
     /// <inheritdoc/>
     public override string ToString()
     {
-        return $"Pos: {Position.ToString()} PosWithScreen: {(PositionWithinScreen == null ? "null" : PositionWithinScreen.ToString())}, ScreenName: {ScreenName}, ScreenType: {ScreenTypeName}";
+        return $"Pos: {Position} PosWithScreen: {(PositionWithinScreen == null ? "null" : PositionWithinScreen)}, ScreenName: {ScreenName}, ScreenType: {ScreenTypeName}";
     }
 }

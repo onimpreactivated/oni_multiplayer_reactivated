@@ -1,7 +1,6 @@
 using HarmonyLib;
 using MultiplayerMod.Core.Execution;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Handlers;
 using UnityEngine;
 
 namespace MultiplayerMod.Patches;
@@ -15,7 +14,7 @@ internal static class GamePatch
     {
         if (!ExecutionManager.LevelIsActive(ExecutionLevel.Multiplayer))
             return;
-        EventManager.TriggerEvent(new GameStartedNoArgsEvent());
+        GameEvents.OnGameStarted();
     }
 
     [HarmonyPostfix]
@@ -35,8 +34,7 @@ internal static class GamePatch
 
         if (!ExecutionManager.LevelIsActive(ExecutionLevel.Multiplayer))
             return;
-
-        EventManager.TriggerEvent(new GameObjectCreated(__result.gameObject));
+        GameEvents.OnGameObjectCreated(__result.gameObject);
     }
 
     [HarmonyPostfix]
@@ -63,6 +61,6 @@ internal static class GamePatch
         if (!ExecutionManager.LevelIsActive(ExecutionLevel.Multiplayer))
             return;
 
-        EventManager.TriggerEvent(new GameObjectCreated(__result.gameObject));
+        GameEvents.OnGameObjectCreated(__result.gameObject);
     }
 }

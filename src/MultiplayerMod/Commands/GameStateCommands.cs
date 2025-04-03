@@ -1,7 +1,6 @@
 using MultiplayerMod.Commands.NetCommands;
 using MultiplayerMod.Core;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Network.Common;
 using MultiplayerMod.Patches.ScreenPatches;
 
@@ -21,7 +20,7 @@ internal class GameStateCommands
     {
         if (TryResume(MultiplayerManager.Instance.MultiGame))
             return;
-        EventManager.SubscribeEvent<PlayersReadyEvent>(OnPlayersReady);
+        MultiplayerEvents.PlayersReady += OnPlayersReady;
         if (SpeedControlScreen.Instance == null)
             return;
         if (!SpeedControlScreen.Instance.IsPaused)
@@ -37,11 +36,10 @@ internal class GameStateCommands
         SpeedControlScreen.Instance.SetSpeed(gameSpeed.Speed);
     }
 
-    [NoAutoSubscribe]
-    [UnsubAfterCall]
-    internal static void OnPlayersReady(PlayersReadyEvent _)
+    internal static void OnPlayersReady()
     {
         Resume();
+        MultiplayerEvents.PlayersReady -= OnPlayersReady;
     }
 
     internal static bool TryResume(MultiplayerGame multiplayer)

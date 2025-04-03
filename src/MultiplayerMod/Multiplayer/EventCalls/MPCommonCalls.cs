@@ -1,24 +1,31 @@
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Behaviour;
-using MultiplayerMod.Events;
-using MultiplayerMod.Events.Common;
-using MultiplayerMod.Events.MainMenu;
-using MultiplayerMod.Events.Others;
+using MultiplayerMod.Events.Arguments.MultiplayerArg;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Multiplayer.UI.Overlays;
 using UnityEngine;
 
 namespace MultiplayerMod.Multiplayer.EventCalls;
 
-internal class MPCommonEvents
+internal class MPCommonCalls : BaseEventCall
 {
-    internal static void ConnectUserToEndPoint(MultiplayerJoinRequestedEvent @event)
+    public override void Init()
     {
-        EventManager.TriggerEvent(new MultiplayerModeSelectedEvent(Core.Player.PlayerRole.Client));
+        MultiplayerEvents.JoinRequested += ConnectUserToEndPoint;
+        MultiplayerEvents.MultiplayerStop += StopServer;
+        GameEvents.GameStarted += TriggerBasicEvents;
+        GameEvents.GameStarted += CreateMultiplayerGameObject;
+        GameEvents.GameStarted += StartServer;
+    }
+
+    internal static void ConnectUserToEndPoint(JoinRequestedArg @event)
+    {
+        MainMenuEvents.OnMultiplayerModeSelected(Core.Player.PlayerRole.Client);
         MultiplayerStatusOverlay.Show($"Connecting to {@event.HostName}...");
         MultiplayerManager.Instance.NetClient.Connect(@event.Endpoint);
     }
 
-    internal static void CreateMultiplayerGameObject(GameStartedEvent _)
+    internal static void CreateMultiplayerGameObject()
     {
         Type[] components =
         [
@@ -35,16 +42,16 @@ internal class MPCommonEvents
         Debug.Log("Game started!");
     }
 
-    internal static void StartServer(GameStartedEvent _)
+    internal static void StartServer()
     {
         if (MultiplayerManager.Instance.MultiGame.Mode != Core.Player.PlayerRole.Server)
             return;
         MultiplayerStatusOverlay.Show("Starting host...");
-        EventManager.SubscribeEvent<PlayersReadyEvent>(CloseOverlayOnReady);
+        MultiplayerEvents.PlayersReady += CloseOverlayOnReady;
         MultiplayerManager.Instance.NetServer.Start();
     }
 
-    internal static void StopServer(StopMultiplayerEvent _)
+    internal static void StopServer()
     {
         if (MultiplayerManager.Instance.MultiGame.Mode != Core.Player.PlayerRole.Server)
             return;
@@ -52,18 +59,17 @@ internal class MPCommonEvents
         MultiplayerManager.Instance.NetServer.Stop();
     }
 
-    internal static void TriggerBasicEvents(GameStartedNoArgsEvent _)
+    internal static void TriggerBasicEvents()
     {
-        EventManager.TriggerEvent(new GameReadyEvent());
-        EventManager.TriggerEvent(new WorldStateInitializingEvent());
-        EventManager.TriggerEvent(new GameStartedEvent());
+        GameEvents.OnGameReady();
+        WorldEvents.OnWorldStateInitializing();
+        MultiplayerEvents.OnMultiplayerStarted();
     }
 
 
-    [NoAutoSubscribe]
-    [UnsubAfterCall]
-    internal static void CloseOverlayOnReady(PlayersReadyEvent _)
+    internal static void CloseOverlayOnReady()
     {
         MultiplayerStatusOverlay.Close();
+        MultiplayerEvents.PlayersReady -= CloseOverlayOnReady;
     }
 }

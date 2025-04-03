@@ -1,22 +1,30 @@
 using MultiplayerMod.Commands.NetCommands;
 using MultiplayerMod.Core;
-using MultiplayerMod.Events.Others;
+using MultiplayerMod.Events.Arguments.Common;
+using MultiplayerMod.Events.Handlers;
 
 namespace MultiplayerMod.Multiplayer.EventCalls;
 
-internal class SpeedCalls
+internal class SpeedCalls : BaseEventCall
 {
-    internal static void SpeedControlSetSpeed_Event(SpeedControlSetSpeed speed)
+    public override void Init()
     {
-        MultiplayerManager.Instance.NetClient.Send(new ChangeGameSpeed(speed.Speed));
+        SpeedControlEvents.SpeedControlResume += SpeedControlResume_Event;
+        SpeedControlEvents.SpeedControlPause += SpeedControlPause_Event;
+        SpeedControlEvents.SpeedControlSetSpeed += SpeedControlSetSpeed_Event;
     }
 
-    internal static void SpeedControlPause_Event(SpeedControlPause _)
+    internal static void SpeedControlSetSpeed_Event(IntArg speed)
+    {
+        MultiplayerManager.Instance.NetClient.Send(new ChangeGameSpeed(speed.Value));
+    }
+
+    internal static void SpeedControlPause_Event()
     {
         MultiplayerManager.Instance.NetClient.Send(new PauseGameCommand());
     }
 
-    internal static void SpeedControlResume_Event(SpeedControlResume _)
+    internal static void SpeedControlResume_Event()
     {
         MultiplayerManager.Instance.NetClient.Send(new ResumeGameCommand());
     }
