@@ -1,8 +1,8 @@
 using MultiplayerMod.Commands.Tools;
 using MultiplayerMod.Commands.Tools.Args;
 using MultiplayerMod.Core.Context;
-using MultiplayerMod.Events;
 using MultiplayerMod.Extensions;
+using MultiplayerMod.Patches.ToolPatches;
 
 namespace MultiplayerMod.Commands;
 
@@ -10,8 +10,8 @@ internal static class DragCommands
 {
     internal static void DragToolCommand_Any(DragToolCommand toolCommand)
     {
+        DragToolEvents.OnDragCompletePatch.IsCommandSent = true;
         Debug.Log("DragToolCommand: " + toolCommand.DragToolType + " " + toolCommand.DragToolType.Name);
-        Debug.Log("DragToolCommand: " + nameof(DigTool));
         switch (toolCommand.DragToolType.Name)
         {
             case nameof(DigTool):
@@ -58,7 +58,12 @@ internal static class DragCommands
     internal static void DragToolCommand_Cancel(DragCompleteCommandArgs args)
     {
         var tool = new CancelTool();
-        RunBasicCommandForTool(tool, args, () => { args.Cells.ForEach(it => tool.OnDragTool(it, 0)); });
+        RunBasicCommandForTool(tool, args, () =>
+        {
+            args.Cells.ForEach(it => tool.OnDragTool(it, 0));
+            // cancelling other things with it.
+            tool.OnDragComplete(args.CursorDown, args.CursorUp);
+        });
     }
 
     internal static void DragToolCommand_Destruction(DragCompleteCommandArgs args)
@@ -120,7 +125,7 @@ internal static class DragCommands
             ["DO_NOT_HARVEST"] = ToolParameterMenu.ToggleState.Off
         };
         args.Parameters?.ForEach(it => tool.options[it] = ToolParameterMenu.ToggleState.On);
-        ContextRunner.Override(new PrioritySettingsContext(args.Priority), () => { tool.OnDragComplete(args.CursorDown, args.CursorUp); });
+        ContextRunner.Override(new PrioritySettingsContext(args.Priority), () => { args.Cells.ForEach(it => tool.OnDragTool(it, 0)); });
     }
 
     internal static void DragToolCommand_Mop(DragCompleteCommandArgs args)
@@ -128,7 +133,7 @@ internal static class DragCommands
         var tool = new MopTool();
         tool.downPos = args.CursorDown;
         tool.Placer = Assets.GetPrefab(new Tag("MopPlacer"));
-        ContextRunner.Override(new PrioritySettingsContext(args.Priority), () => { tool.OnDragComplete(args.CursorDown, args.CursorUp); });
+        ContextRunner.Override(new PrioritySettingsContext(args.Priority), () => { args.Cells.ForEach(it => tool.OnDragTool(it, 0)); });
     }
 
     internal static void DragToolCommand_Prioritize(DragCompleteCommandArgs args)
@@ -144,7 +149,10 @@ internal static class DragCommands
             [ToolParameterMenu.FILTERLAYERS.ALL] = ToolParameterMenu.ToggleState.Off
         };
         args.Parameters?.ForEach(it => filteredTool.currentFilterTargets[it] = ToolParameterMenu.ToggleState.On);
-        ContextRunner.Override(new ContextArray(new PrioritySettingsContext(args.Priority), new DisablePriorityConfirmSound()), () => { tool.OnDragComplete(args.CursorDown, args.CursorUp); });
+        ContextRunner.Override(new ContextArray(new PrioritySettingsContext(args.Priority), new DisablePriorityConfirmSound()), () =>
+        {
+            args.Cells.ForEach(it => tool.OnDragTool(it, 0));
+        });
     }
 
     [NoAutoSubscribe]

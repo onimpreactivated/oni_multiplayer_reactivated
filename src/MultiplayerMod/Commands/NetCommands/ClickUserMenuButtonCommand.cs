@@ -10,20 +10,27 @@ namespace MultiplayerMod.Commands.NetCommands;
 /// <param name="gameObject"></param>
 /// <param name="action"></param>
 [Serializable]
-public class ClickUserMenuButtonCommand(GameObject gameObject, System.Action action) : BaseCommandEvent
+public class ClickUserMenuButtonCommand : BaseCommandEvent
 {
     /// <summary>
     /// Resolver for <see cref="GameObject"/>
     /// </summary>
-    public GameObjectResolver Resolver => gameObject.GetGOResolver();
+    public GameObjectResolver Resolver { get; }
 
     /// <summary>
     /// The Method Declaring Type
     /// </summary>
-    public Type ActionDeclaringType => action.Method.DeclaringType!;
+    public Type ActionDeclaringType { get; }
 
     /// <summary>
     /// The Method Name
     /// </summary>
-    public string ActionName => action.Method.Name;
+    public string ActionName { get; }
+
+    public ClickUserMenuButtonCommand(GameObject gameObject, System.Action action)
+    {
+        Resolver = gameObject.GetGOResolver();
+        ActionDeclaringType = action.Method.DeclaringType;
+        ActionName = action.Method.Name;
+    }
 }

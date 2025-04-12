@@ -11,20 +11,18 @@ namespace MultiplayerMod.Commands.NetCommands.Args;
 /// </remarks>
 /// <param name="schedule"></param>
 [Serializable]
-public class SerializableSchedule(global::Schedule schedule)
+public class SerializableSchedule
 {
     /// <summary>
     /// Name of the <see cref="Schedule"/>
     /// </summary>
-    public string Name { get; } = schedule.name;
+    public string Name { get; }
     /// <summary>
     /// Is the alarm active for <see cref="Schedule"/>
     /// </summary>
-    public bool AlarmActivated { get; } = schedule.alarmActivated;
-    private readonly List<ComponentResolver<Schedulable>> assigned = schedule.assigned
-            .Select(@ref => @ref.obj.gameObject.GetComponent<Schedulable>().GetComponentResolver())
-            .ToList();
-    private readonly List<string> blocks = schedule.blocks.Select(block => block.GroupId).ToList();
+    public bool AlarmActivated { get; }
+    private List<ComponentResolver<Schedulable>> assigned { get; } = new();
+    private List<string> blocks { get; } = new();
 
     private static readonly Dictionary<string, ScheduleGroup> groups =
         Db.Get().ScheduleGroups.allGroups.ToDictionary(
@@ -52,4 +50,14 @@ public class SerializableSchedule(global::Schedule schedule)
     /// Assigned <see cref="Schedule"/> referece list
     /// </summary>
     public List<Ref<Schedulable>> Assigned => assigned.Select(reference => new Ref<Schedulable>(reference.Resolve())).ToList();
+
+    public SerializableSchedule(global::Schedule schedule)
+    {
+        Name = schedule.name;
+        AlarmActivated = schedule.alarmActivated;
+        assigned = schedule.assigned
+            .Select(@ref => @ref.obj.gameObject.GetComponent<Schedulable>().GetComponentResolver())
+            .ToList();
+        blocks = schedule.blocks.Select(block => block.GroupId).ToList();
+    }
 }

@@ -4,27 +4,35 @@ using MultiplayerMod.Extensions;
 
 namespace MultiplayerMod.Commands.Tools;
 
-/// <summary>
-/// Command that let move into cell.
-/// </summary>
-/// <param name="navigator"></param>
-/// <param name="movable"></param>
-/// <param name="cell"></param>
+
 [Serializable]
-public class MoveToLocationCommand(Navigator navigator, Movable movable, int cell) : BaseCommandEvent
+public class MoveToLocationCommand : BaseCommandEvent
 {
     /// <summary>
     /// Resolver for <see cref="Navigator"/>
     /// </summary>
-    public ComponentResolver<Navigator> NavigatorReference => navigator.GetComponentResolver();
+    public ComponentResolver<Navigator> NavigatorReference { get; }
 
     /// <summary>
     /// Resolver for <see cref="Movable"/>
     /// </summary>
-    public ComponentResolver<Movable> MovableReference => movable.GetComponentResolver();
+    public ComponentResolver<Movable> MovableReference { get; }
 
     /// <summary>
     /// Move to this cell
     /// </summary>
-    public int Cell => cell;
+    public int Cell { get; }
+
+    /// <summary>
+    /// Command that let move into cell.
+    /// </summary>
+    /// <param name="navigator"></param>
+    /// <param name="movable"></param>
+    /// <param name="cell"></param>
+    public MoveToLocationCommand(Navigator navigator, Movable movable, int cell)
+    {
+        NavigatorReference = navigator.GetComponentResolver();
+        MovableReference = movable.GetComponentResolver();
+        Cell = cell;
+    }
 }

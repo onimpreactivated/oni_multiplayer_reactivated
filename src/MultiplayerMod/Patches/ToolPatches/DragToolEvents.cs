@@ -68,6 +68,7 @@ internal static class DragToolEvents
     [HarmonyPatch]
     internal class OnDragCompletePatch
     {
+        internal static bool IsCommandSent = false;
 
         internal static IEnumerable<MethodBase> TargetMethods()
             => Assembly.GetAssembly(typeof(DragTool))
@@ -88,6 +89,15 @@ internal static class DragToolEvents
         {
             if (!ExecutionManager.LevelIsActive(ExecutionLevel.Game))
                 return;
+
+            if (IsCommandSent)
+            {
+                IsCommandSent = false;
+                selection.Clear();
+                lastTool = null;
+                return;
+            }
+
             AssertSameInstance(instance);
 
             var args = new DragCompleteCommandArgs(
