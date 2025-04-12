@@ -1,4 +1,4 @@
-﻿namespace MultiplayerMod.Events.Handlers;
+namespace MultiplayerMod.Events.Handlers;
 
 public static class WorldEvents
 {
@@ -11,26 +11,26 @@ public static class WorldEvents
 
     public static void OnWorldLoading()
     {
-        WorldLoading.Invoke();
+        WorldLoading?.Invoke();
     }
 
     public static void OnWorldSync()
     {
-        WorldSync.Invoke();
+        WorldSync?.Invoke();
     }
 
     public static void OnWorldSyncRequested()
     {
-        WorldSyncRequested.Invoke();
+        WorldSyncRequested?.Invoke();
     }
 
     public static void OnWorldSaved()
     {
-        WorldSaved.Invoke();
+        WorldSaved?.Invoke();
     }
 
     public static void OnWorldStateInitializing()
     {
-        WorldStateInitializing.Invoke();
+        WorldStateInitializing?.Invoke();
     }
 }
