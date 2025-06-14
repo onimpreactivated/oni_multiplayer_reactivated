@@ -65,7 +65,7 @@ public class MultiplayerManager
     private void InitMultiplayerLogics()
     {
         Debug.Log("InitMultiplayerLogics");
-        WorldManager = new([/*new ChoreWorldStateManager()*/]);
+        WorldManager = new([new ChoreWorldStateManager()]);
         Calls.AddRange([
             new DragCompleteCalls(), 
             new ExecutionCalls(),
@@ -77,6 +77,7 @@ public class MultiplayerManager
             new SpeedCalls(),
             new UICalls(),
             new WorldCalls(),
+            new ChoreCalls(),
         ]);
         foreach (var call in Calls)
         {

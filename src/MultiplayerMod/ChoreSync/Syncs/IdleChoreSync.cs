@@ -38,7 +38,6 @@ internal class IdleChoreSync : BaseChoreSync<IdleChore.States>
     public override void Client(StateMachine instance)
     {
         Setup(instance);
-
         /*
         SM.idle.onfloor.ToggleScheduleCallback("", null, null);
         SM.idle.onladder.ToggleScheduleCallback("", null, null);

@@ -78,7 +78,7 @@ internal class DragCompleteCalls : BaseEventCall
 
     internal static void DragCompletedEvent_Call(DragToolCompleteArg @event)
     {
-        BaseCommandEvent command = null;
+        BaseCommandEvent command;
         switch (@event.Sender)
         {
             case DigTool:

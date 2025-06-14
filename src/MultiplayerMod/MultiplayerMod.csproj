@@ -17,7 +17,7 @@
 
 	<PropertyGroup>
 		<OniSupportedContent>ALL</OniSupportedContent>
-		<OniMinimumSupportedBuild>651155</OniMinimumSupportedBuild>
+		<OniMinimumSupportedBuild>674504</OniMinimumSupportedBuild>
 		<OniApiVersion>2</OniApiVersion>
 	</PropertyGroup>
 

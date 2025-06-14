@@ -18,7 +18,7 @@ public static class ArgumentUtils
     /// <returns></returns>
     public static object[] WrapObjects(object[] objects)
     {
-        return objects.Select(WrapObject).ToArray();
+        return [.. objects.Select(WrapObject)];
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ public static class ArgumentUtils
     /// <returns></returns>
     public static object[] UnWrapObjects(object[] objects)
     {
-        return objects.Select(UnWrapObject).ToArray();
+        return [.. objects.Select(UnWrapObject)];
     }
 
     /// <summary>

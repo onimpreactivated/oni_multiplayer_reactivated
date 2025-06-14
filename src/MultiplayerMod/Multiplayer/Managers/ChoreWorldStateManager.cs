@@ -3,6 +3,8 @@ using MultiplayerMod.Core;
 using MultiplayerMod.Core.Objects;
 using MultiplayerMod.Core.Objects.Resolvers;
 using MultiplayerMod.Core.Wrappers;
+using MultiplayerMod.Events.Arguments.Chores;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Extensions;
 using MultiplayerMod.Multiplayer.Controllers;
 using MultiplayerMod.Multiplayer.Datas.World;
@@ -10,7 +12,7 @@ using MultiplayerMod.Multiplayer.Interfaces;
 
 namespace MultiplayerMod.Multiplayer.Managers;
 
-/*
+
 /// <summary>
 /// Sync Chore between clients
 /// </summary>
@@ -23,8 +25,8 @@ public class ChoreWorldStateManager : IWorldStateManager
     /// </summary>
     public ChoreWorldStateManager()
     {
-        CommandManager.SubscribeEvent<ChoreCreatedEvent>(ChoreCreatedEvent_Call);
-        CommandManager.SubscribeEvent<ChoreCleanupEvent>(ChoreCleanupEvent_Call);
+        ChoresEvents.ChoreCreated += ChoreCreatedEvent_Call;
+        ChoresEvents.ChoreCleanup += ChoreCleanupEvent_Call;
     }
 
     /// <inheritdoc/>
@@ -58,14 +60,14 @@ public class ChoreWorldStateManager : IWorldStateManager
     {
         ChoresState state = new(data)
         {
-            Chores = CurrentChores.Values.Where(x=>x.Id != null).Select(it => new ChoreState
+            Chores = [.. CurrentChores.Values.Where(x=>x.Id != null).Select(it => new ChoreState
             {
                 id = it.Id,
                 type = it.Type,
                 arguments = ArgumentUtils.WrapObjects(ChoreArgumentsWrapper.Wrap(it.Type, it.Arguments))
-            }).ToArray(),
+            })],
 
-            Drivers = UnityEngine.Object.FindObjectsOfType<ChoreDriver>()
+            Drivers = [.. UnityEngine.Object.FindObjectsOfType<ChoreDriver>()
             .Where(it =>
             {
                 var chore = it.GetCurrentChore();
@@ -80,8 +82,7 @@ public class ChoreWorldStateManager : IWorldStateManager
                 Driver = it.GetComponentResolver(),
                 Consumer = it.context.consumerState.consumer.GetComponentResolver(),
                 Chore = new ChoreResolver(it.GetCurrentChore())
-            })
-            .ToArray()
+            })]
         };
     }
 
@@ -90,7 +91,7 @@ public class ChoreWorldStateManager : IWorldStateManager
         CurrentChores.Add(@event.Chore, @event);
     }
 
-    internal void ChoreCleanupEvent_Call(ChoreCleanupEvent @event)
+    internal void ChoreCleanupEvent_Call(ChoreCleanupEventArg @event)
     {
         if (@event.Chore == null)
             return;
@@ -131,4 +132,3 @@ public class ChoreWorldStateManager : IWorldStateManager
         public ChoreResolver Chore;
     }
 }
-*/

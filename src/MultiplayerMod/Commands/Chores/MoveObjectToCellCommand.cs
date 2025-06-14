@@ -11,7 +11,7 @@ namespace MultiplayerMod.Commands.Chores;
 /// <param name="cell"></param>
 /// <param name="movingStateName"></param>
 [Serializable]
-public class MoveObjectToCellCommand(TypedResolver<StateMachine.Instance> reference, int cell, string movingStateName) : BaseCommandEvent
+public class MoveObjectToCellCommand : BaseCommandEvent
 {
     /// <summary>
     /// <see cref="ParameterInfo{T}"/> for movint to target cell.
@@ -24,17 +24,17 @@ public class MoveObjectToCellCommand(TypedResolver<StateMachine.Instance> refere
     /// <summary>
     /// Resolver for <see cref="StateMachine.Instance"/>
     /// </summary>
-    public TypedResolver<StateMachine.Instance> Reference => reference;
+    public TypedResolver<StateMachine.Instance> Reference { get; }
 
     /// <summary>
     /// Name of the moving state
     /// </summary>
-    public string MovingStateName => movingStateName;
+    public string MovingStateName { get; }
 
     /// <summary>
     /// Cell to move to
     /// </summary>
-    public int Cell => cell;
+    public int Cell { get; }
 
     /// <summary>
     /// Called when Chore must move to a different cell.
@@ -52,7 +52,14 @@ public class MoveObjectToCellCommand(TypedResolver<StateMachine.Instance> refere
     /// <param name="reference"></param>
     /// <param name="cell"></param>
     /// <param name="movingStateInfo"></param>
-    public MoveObjectToCellCommand(TypedResolver<StateMachine.Instance> reference,int cell, StateInfo movingStateInfo) :
+    public MoveObjectToCellCommand(TypedResolver<StateMachine.Instance> reference, int cell, StateInfo movingStateInfo) :
         this(reference, cell, movingStateInfo?.ReferenceName)
     { }
+
+    public MoveObjectToCellCommand(TypedResolver<StateMachine.Instance> reference, int cell, string movingStateName)
+    {
+        Reference = reference;
+        Cell = cell;
+        MovingStateName = movingStateName;
+    }
 }

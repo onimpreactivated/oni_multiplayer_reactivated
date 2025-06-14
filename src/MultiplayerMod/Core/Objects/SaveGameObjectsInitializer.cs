@@ -1,3 +1,4 @@
+using EIV_Common.Coroutines;
 using MultiplayerMod.Core.Behaviour;
 using MultiplayerMod.Extensions;
 
@@ -15,7 +16,7 @@ public class SaveGameObjectsInitializer(MultiplayerObjects objects)
     public void Initialize()
     {
         AddPrefabs();
-        AddChores();
+        CoroutineWorkerCustom.CallDelayed(TimeSpan.FromMilliseconds(2), AddChores);
         Debug.Log("SaveGameObjectsInitializer.Initialize");
     }
 

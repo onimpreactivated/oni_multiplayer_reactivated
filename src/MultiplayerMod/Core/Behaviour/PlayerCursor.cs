@@ -26,7 +26,7 @@ internal class PlayerCursor : KMonoBehaviour
         var cursorName = $"{player.Profile.PlayerName}'s cursor";
         var cursor = new GameObject(cursorName) { transform = { parent = canvas.transform } };
         cursor.AddComponent<PlayerAssigner>().Player = player;
-        cursor.AddComponent<CursorComponent>();
+        //cursor.AddComponent<CursorComponent>();
         cursor.AddComponent<DestroyOnPlayerLeave>();
     }
 }

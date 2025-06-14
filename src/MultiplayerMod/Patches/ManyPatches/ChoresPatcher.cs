@@ -1,14 +1,14 @@
-using EIV_Common.Coroutines;
 using HarmonyLib;
 using MultiplayerMod.Core;
 using MultiplayerMod.Core.Execution;
+using MultiplayerMod.Events.Handlers;
 using MultiplayerMod.Extensions;
 using MultiplayerMod.Multiplayer.Controllers;
 using System.Reflection.Emit;
 
 namespace MultiplayerMod.Patches.ManyPatches;
 
-//[HarmonyPatch]
+[HarmonyPatch]
 internal static class ChoresPatcher
 {
     [HarmonyPostfix]
@@ -19,6 +19,11 @@ internal static class ChoresPatcher
             return;
         if (MultiplayerManager.Instance.MultiGame.Mode != Core.Player.PlayerRole.Client)
             return;
+        if (__instance == null)
+        {
+            Debug.LogError("Instance is null!");
+            return;
+        }
         __instance.AddPrecondition(ChoresController.IsDriverBusy);
         __instance.AddPrecondition(ChoresController.IsMultiplayerChore);
     }
@@ -32,7 +37,7 @@ internal static class ChoresPatcher
         var wasValid = __instance.IsValid_Ext();
         bool Had = MultiplayerManager.Instance.MultiGame.Objects.RemoveObject(__instance);
         Debug.Log($"ChoreCleanup: Clear Chore: {__instance}, WasValid: {wasValid}, Had: {Had}");
-        //EventManager.TriggerEvent(new ChoreCleanupEvent(__instance));
+        ChoresEvents.OnChoreCleanup(__instance);
     }
     
 
@@ -64,40 +69,6 @@ internal static class ChoresPatcher
             return;
         if (MultiplayerManager.Instance.MultiGame.Mode != Core.Player.PlayerRole.Server)
             return;
-        CoroutineWorkerCustom.StartCoroutine(_BeforeChoreSetCoroutine(driver, previousChore, context), CoroutineType.Custom, "BeforeChoreSet");
-
-    }
-
-    internal static IEnumerator<double> _BeforeChoreSetCoroutine(ChoreDriver driver, Chore previousChore, Chore.Precondition.Context context)
-    {
-        yield return TimeSpan.FromMilliseconds(10).TotalSeconds;
-        StateMachine.Instance smi = null;
-        yield return CoroutineWorkerCustom.WaitUntilTrue(() =>
-        {
-            try
-            {
-                Debug.Log($"Create Wait Chore! {context.chore.GetType()}");
-                if (context.chore is not StandardChoreBase scb)
-                {
-                    Debug.Log($"Create Wait Chore! scb is null!! {context.chore.GetType()}");
-                    return true;
-                }
-                smi = scb.GetSMI();
-                return smi != null;
-            }
-            catch (Exception ex)
-            {
-                Debug.Log(ex.ToString());
-                return false;
-            }
-        });
-        if (smi == null)
-        {
-            Debug.Log("Could not set smi.");
-            yield break;
-        }
-        Debug.Log($"BeforeChoreSetCall: Driver: {driver} Prev Chore: {previousChore} contect chore: {context.chore}");
-        //EventManager.TriggerEvent(new BeforeChoreSetEvent(driver, previousChore, ref context));
-        yield break;
+        ChoresEvents.OnChoreBeforeSetEvent(driver, previousChore, ref context);
     }
 }

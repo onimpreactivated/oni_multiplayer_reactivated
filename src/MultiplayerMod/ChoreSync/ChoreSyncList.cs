@@ -31,11 +31,11 @@ internal static class ChoreSyncList
 
     public static List<Type> GetStateMachineTypes()
     {
-        return Chores.Select(chore => chore.StateMachineType).ToList();
+        return [.. Chores.Select(chore => chore.StateMachineType)];
     }
 
     public static List<Type> GetSyncTypes()
     {
-        return Chores.Select(chore => chore.SyncType).ToList();
+        return [.. Chores.Select(chore => chore.SyncType)];
     }
 }

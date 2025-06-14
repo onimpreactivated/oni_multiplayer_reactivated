@@ -9,7 +9,7 @@ namespace MultiplayerMod.Commands.Chores;
 /// <param name="resolver"></param>
 /// <param name="statename"></param>
 [Serializable]
-public class GoToStateCommand(TypedResolver<StateMachine.Instance> resolver, string statename) : BaseCommandEvent
+public class GoToStateCommand : BaseCommandEvent
 {
     /// <summary>
     /// State Machine related command that set the new state to <paramref name="state"/> in <paramref name="resolver"/>
@@ -20,13 +20,19 @@ public class GoToStateCommand(TypedResolver<StateMachine.Instance> resolver, str
         this(resolver, state?.name)
     { }
 
+    public GoToStateCommand(TypedResolver<StateMachine.Instance> resolver, string statename)
+    {
+        Resolver = resolver;
+        StateName = statename;
+    }
+
     /// <summary>
     /// Resolver for <see cref="StateMachine.Instance"/>
     /// </summary>
-    public TypedResolver<StateMachine.Instance> Resolver => resolver;
+    public TypedResolver<StateMachine.Instance> Resolver { get; }
 
     /// <summary>
     /// The new state it should go.
     /// </summary>
-    public string StateName => statename;
+    public string StateName { get; }
 }

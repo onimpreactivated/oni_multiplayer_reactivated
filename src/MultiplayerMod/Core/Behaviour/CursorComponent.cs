@@ -26,9 +26,9 @@ public class CursorComponent : KMonoBehaviour
     private readonly SmoothCursor worldCursor = new();
     private readonly SmoothCursor screenCursor = new();
 
-    private string playerName;
-    private string screenName;
-    private string screenTypeName;
+    private string playerName = string.Empty;
+    private string screenName = string.Empty;
+    private string screenTypeName = string.Empty;
 
     /// <inheritdoc/>
     public override void OnSpawn()

@@ -27,7 +27,7 @@ public class MultiplayerObjects
             Clear(force: false);
             initializer.Initialize();
         };
-        GameEvents.GameReady += () => { initializer.Initialize(); };
+        GameEvents.GameReady += initializer.Initialize;
     }
 
     /// <summary>
@@ -46,8 +46,8 @@ public class MultiplayerObjects
     /// <returns></returns>
     public MultiplayerObject Register(object instance, MultiplayerId multiplayerId = null, bool persistent = false)
     {
-        Debug.Log("MultiplayerObjects Register " + instance);
         MultiplayerObject @object = new(multiplayerId ?? new MultiplayerId(Guid.NewGuid()), generation, persistent);
+        Debug.Log($"MultiplayerObjects.Register {instance} {@object.Id}");
         index[@object] = instance;
         return @object;
     }
